@@ -319,21 +319,21 @@
                             現在のページ：{{cur_page}}/{{numOfPage}}
                         </th>
                         <th class = "pagenation">
-                            <a href="javascript:"  ng-click="firstPage()" class="page-num"><<最初へ</a>
+                            <a href="javascript:"  ng-click="firstPage();gotoTop()" class="page-num"><<最初へ</a>
                         </th>
                         <th class = "pagenation" ng-show="pager_start>=9">
                             <a href="javascript:" ng-click="pager_start = pager_start-9" class="page-num"><前へ</a>
                         </th>
                         <span class="pagination">
                         <th ng-repeat = "i in arrOfPage(numOfPage)| startFrom: pager_start| limitTo: pager_len">
-                            <a href="javascript:" ng-click="pager(i)" class="page-num pagetop">{{i+1}}</a>
+                            <a href="javascript:" ng-click="pager(i);gotoTop()" class="page-num pagetop">{{i+1}}</a>
                         </th>
                         </span>
                         <th class = "pagenation" ng-show="pager_start+9 < numOfPage">
                             <a href="javascript:"  ng-click="pager_start = pager_start+9" class="page-num">次へ></a>
                         </th>
                         <th class = "pagenation">
-                            <a href="javascript:"  ng-click="lastPage()" class="page-num">最後へ>></a>
+                            <a href="javascript:"  ng-click="lastPage();gotoTop()" class="page-num">最後へ>></a>
                         </th>
                     </span>
                 </table>
