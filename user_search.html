@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="ja" ng-app="concierAdminApp">
+<head>
+    <meta charset = "UTF-8">
+    <title>絞込み検索</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
+    <link rel="stylesheet" type="text/css" href="user_search.css">
+</head>
+<body>
+<div ng-controller="UserSearchCtrl">
+<div class="container-fluid">
+        <div class="row user-list-search-field">
+            <div class="col-lg-12 col-xs-12">
+                
+                <div class="bg-primary"></div>
+
+                <form name="frm">
+                    <div class="list-group">
+
+                        <div class="list-group-item active">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                絞り込み条件を指定してください
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="list-group-item" style="padding-top: 20px">
+                            <div class="row">
+                                <div class=" col-sm-1 ">
+                                大学
+                                </div>
+                                <div class="col-sm-2">
+                                    <label>
+                                        <input type="button" value="全てチェック" ng-model="allFrags.univ_level" ng-click = "allFrags.univ_level=true;onChange('univ_level',allFrags.univ_level)" name="allFrags.univ_level" class="btn btn-secondary btn-xs">
+                                    </label>
+                                    </br>
+                                    <label>
+                                        <input type="button" value="解除" ng-model="allFrags.univ_level" ng-click = "allFrags.univ_level=false;onChange('univ_level',allFrags.univ_level)" name="allFrags.univ_level" class="btn btn-default btn-xs">
+                                    </label>
+                                    <label>
+                                        <font size="1">タグなし：</font>
+                                        <input type="checkbox" ng-model="nullTagUserFrags['univ_level']" ng-click = "runSearch()" name="null_tag_user_include" checked="checked">
+                                    </label>
+                                </div>
+                                <div class="col-sm-9">
+                                    <label ng-repeat="tag in univGroupList">
+                                        <input type="checkbox" ng-model="selected.univ_level[tag.univ_level]" ng-checked="allFrags.univ_level" name="univ_level_search">
+                                        <!-- <input type="checkbox" ng-model="user_univ" value="{{tag.name}}" name="univ_search"> -->
+                                            {{tag.group}}
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+            
+                        <div class="list-group-item">
+                            <div class="row">
+                                <div class="col-sm-1">
+                                卒業年度
+                                </div>
+                                <div class="col-sm-2">
+                                    <label>
+                                        <input type="button" value="全てチェック" ng-model="allFrags.grade" ng-click = "allFrags.grade=true;onChange('grade',allFrags.grade)" name="allFrags.grade" class="btn btn-secondary btn-xs">
+                                    </label>
+                                    </br>
+                                    <label>
+                                        <input type="button" value="解除" ng-model="allFrags.grade" ng-click = "allFrags.grade=false;onChange('grade',allFrags.grade)" name="allFrags.grade" class="btn btn-default btn-xs">
+                                    </label>
+                                    <label>
+                                        <font size="1">タグなし：</font>
+                                        <input type="checkbox" ng-model="nullTagUserFrags['grade']" ng-click = "runSearch()" name="null_tag_user_include" checked="checked">
+                                    </label>
+                                </div>
+                                <div class="col-sm-9">
+                                    <label ng-repeat="tag in userTag|filter: { category:'grade' }">
+                                        <input type="checkbox" ng-model="selected.grade[tag.name]" ng-checked="allFrags.grade" name="grade_search">
+                                        <!-- <input type="checkbox" ng-model="user_univ" value="{{tag.name}}" name="univ_search"> -->
+                                            {{tag.name}}
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="list-group-item">
+                            <div class="row">
+                                <div class="col-sm-1">
+                                専攻
+                                </div>
+                                <div class="col-sm-2">
+                                    <div>
+                                    <label>
+                                        <input type="button" value="全てチェック" ng-model="allFrags.major" ng-click = "allFrags.major=true;onChange('major',allFrags.major)" name="allFrags.major" class="btn btn-secondary btn-xs">
+                                    </label>
+                                    </br>
+                                    <label>
+                                        <input type="button" value="解除" ng-model="allFrags.major" ng-click = "allFrags.major=false;onChange('major',allFrags.major)" name="allFrags.major" class="btn btn-default btn-xs">
+                                    </label>
+                                    <label>
+                                        <font size="1">タグなし：</font>
+                                        <input type="checkbox" ng-model="nullTagUserFrags['major']" ng-click = "runSearch()" name="null_tag_user_include" checked="checked">
+                                    </label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-9">
+                                <label>
+                                    <input type="checkbox" ng-model="selected.major['文系']" ng-checked="allFrags.major" name="major_search">
+                                    <!-- <input type="checkbox" ng-model="user_univ" value="{{tag.name}}" name="univ_search"> -->
+                                        文系
+                                </label>
+                                <label ng-repeat="tag in userTag|filter: { category:'major_sci' }">
+                                    <input type="checkbox" ng-model="selected.major[tag.name]" ng-checked="allFrags.major" name="major_search">
+                                  <!-- <input type="checkbox" ng-model="user_univ" value="{{tag.name}}" name="univ_search"> -->
+                                        {{tag.name}}
+                                </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="list-group-item">
+                            <div class="row">
+                                <div class="col-sm-1">
+                                志向
+                                </div>
+                                <div class="col-sm-2">
+                                <label>
+                                    <input type="button" value="全てチェック" ng-model="allFrags.preference" ng-click = "allFrags.preference=true;onChange('preference',allFrags.preference)" name="allFrags.preference" class="btn btn-secondary btn-xs">
+                                </label>
+                                </br>
+                                <label>
+                                    <input type="button" value="解除" ng-model="allFrags.preference" ng-click = "allFrags.preference=false;onChange('preference',allFrags.preference)" name="allFrags.preference" class="btn btn-default btn-xs">
+                                </label>
+                                <label>
+                                    <font size="1">タグなし：</font>
+                                    <input type="checkbox" ng-model="nullTagUserFrags['preference']" ng-click = "runSearch()" name="null_tag_user_include" checked="checked">
+                                </label>
+                                </div>
+                                <div class="col-sm-9">
+                                <label ng-repeat="tag in userTag|filter: { category:'preference' }">
+                                  <input type="checkbox" ng-model="selected.preference[tag.name]" ng-checked="allFrags.preference" name="preference_search">
+                                  <!-- <input type="checkbox" ng-model="user_univ" value="{{tag.name}}" name="univ_search"> -->
+                                    {{tag.name}}
+                                </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="list-group-item">
+                            <div class="row">
+                                <div class="col-sm-1">
+                                志望業界
+                                </div>
+                                <div class="col-sm-2">
+                                <label>
+                                    <input type="button" value="全てチェック" ng-model="allFrags.industry" ng-click = "allFrags.industry=true;onChange('industry',allFrags.industry)" name="allFrags.industry" class="btn btn-secondary btn-xs">
+                                </label>
+                                </br>
+                                <label>
+                                    <input type="button" value="解除" ng-model="allFrags.industry" ng-click = "allFrags.industry=false;onChange('industry',allFrags.industry)" name="allFrags.industry" class="btn btn-default btn-xs">
+                                </label>
+                                <label>
+                                    <font size="1">タグなし：</font>
+                                    <input type="checkbox" ng-model="nullTagUserFrags['industry']" ng-click = "runSearch()" name="null_tag_user_include" checked="checked">
+                                </label>
+                                </div>
+                                <div class="col-sm-9">
+                                <label ng-repeat="tag in userTag|filter: { category:'industry' }| filter : '!（旧）'| limitTo : 16 ">
+                                    <input type="checkbox" ng-model="selected.industry[tag.name]" ng-checked="allFrags.industry" name="industry_search">
+                                    <!-- <input type="checkbox" ng-model="user_univ" value="{{tag.name}}" name="univ_search"> -->
+                                    {{tag.name}}
+                                </label>
+                                <label ng-repeat="tag in userTag|filter: { category:'industry' }| startFrom: 16| filter : '!（旧）'" ng-show="industryShow">
+                                    <input type="checkbox" ng-model="selected.industry[tag.name]" ng-checked="allFrags.industry" name="industry_search">
+                                    <!-- <input type="checkbox" ng-model="user_univ" value="{{tag.name}}" name="univ_search"> -->
+                                    {{tag.name}}
+                                </label>
+                                <a href="javascript:" ng-click = "showIndustryTag()" style = "text-decoration: none">{{industryShowIcon}}</a>
+                                <!--↑ng-showによって表示／非表示を変更する。-->
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="list-group-item">
+                            <div class="row">
+                                <div class="col-sm-1">
+                                性別
+                                </div>
+                                <div class="col-sm-2">
+                                    <label>
+                                        <input type="button" value="全てチェック" ng-model="allFrags.sex" ng-click = "allFrags.sex=true;onChange('sex',allFrags.sex)" name="allFrags.sex" class="btn btn-secondary btn-xs">
+                                    </label>
+                                    </br>
+                                    <label>
+                                        <input type="button" value="解除" ng-model="allFrags.sex" ng-click = "allFrags.sex=false;onChange('sex',allFrags.sex)" name="allFrags.sex" class="btn btn-default btn-xs">
+                                    </label>
+                                    <label>
+                                        <font size="1">タグなし：</font>
+                                        <input type="checkbox" ng-model="nullTagUserFrags['sex']" ng-click = "runSearch()" name="null_tag_user_include" checked="checked">
+                                    </label>
+                                </div>
+                                <div class="col-sm-9">
+                                  <label>
+                                    <input type="checkbox" ng-model="selected.sex['男']" ng-checked="allFrags.sex" name="sex_search">
+                                      男
+                                  </label>
+                                  <label>
+                                    <input type="checkbox" ng-model="selected.sex['女']" ng-checked="allFrags.sex" name="sex_search">
+                                      女
+                                  </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="list-group-item" id="top">
+                            <div class="row">
+                                <div class="col-sm-6">
+                                最小やりとり数　
+                                    <select  ng-model="search.loyalty" name="loyalty_search">
+                                        <option value="" selected="selected">以下から選択してください。</option>
+                                        <option value="0">0</option>
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                        <option value="5">5</option>
+                                        <option value="10">10</option>
+                                        <option value="20">20</option>
+                                        <option value="50">50</option>
+                                    </select>
+                                </div>
+                                <div class="col-sm-6">
+                                キーワード検索　
+                                <input type="text" ng-model="selected.keyword" name="keyword_search">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="list-group-item">
+                            <div class="row">
+                                <div class="col-sm-4">
+                                全表示件数：{{searchedValue = (lineUserList | filter:filterByTag| filter: filterByLoyalty| filter: selected.keyword| filter: filterUser ).length}}
+                                </div>
+                                <div  class="col-sm-7">
+                                </div>
+                                <div class="col-sm-1">
+                                <button ng-click="runSearch()" class="btn btn-primary">
+                                    検索
+                                </button>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </form>
+
+<!--
+    <div>
+        テストtestStr：{{testStr}}
+    </div>
+    <div>
+        テストtest：{{test}}
+    </div>
+    <div>
+        テストindexOf：{{testIndexOf}}
+    </div>
+    <div>
+        テストlineUserList：{{lineUserList}}
+    </div>
+    <div>
+        テストtestTags：{{testTags}}
+    </div>
+    <div >
+        テストtestItems：{{testItems}}
+    </div>
+    <div>
+        テストallFrags：{{allFrags}}
+    </div>
+    <div>
+        テストnullTagUserFrags：{{nullTagUserFrags}}
+    </div>
+    <div>
+        テストselected：{{selected}}
+    </div>
+    <div>
+        テストsearch：{{search}}
+    </div>
+-->
+
+                     <div class="row show-head" style="position: relative">
+
+                        <div class="col-sm-2">
+                    <button ng-click="all=true;allCheck(all)" class="btn btn-primary btn-xs">
+                        全てチェック
+                    </button>
+                    <button ng-click="all=false;allCheck(all)" class="btn btn-border btn-xs">
+                        <span class="text-primary">全解除</span>
+                    </button>
+                </div>
+
+                <div class="col-sm-3">
+                    <span class="col-right">
+                        ページ当たり表示する件数
+                            <select  ng-model="len" name="pageValue" ng-change="calPage(len)">
+                                <option value="10">10</option>
+                                <option value="20">20</option>
+                                <option value="50" ng-selected = "true">50</option>
+                                <!--ng-selectedをtrueにしないと選択されない-->
+                                <option value="100">100</option>
+                                <option value="200">200</option>
+                                <option value="500">500</option>
+                                <option ng-value= searchedValue>全件</option>
+                            </select>
+                    </span>
+                </div>
+
+                <table class="page-num-table col-sm-7" id = "paginate-table">
+                    <span>
+                        <th class="cur-page-num">
+                            現在のページ：{{cur_page}}/{{numOfPage}}
+                        </th>
+                        <th class = "pagenation">
+                            <a href="javascript:"  ng-click="firstPage()" class="page-num"><<最初へ</a>
+                        </th>
+                        <th class = "pagenation" ng-show="pager_start>=9">
+                            <a href="javascript:" ng-click="pager_start = pager_start-9" class="page-num"><前へ</a>
+                        </th>
+                        <span class="pagination">
+                        <th ng-repeat = "i in arrOfPage(numOfPage)| startFrom: pager_start| limitTo: pager_len">
+                            <a href="javascript:" ng-click="pager(i)" class="page-num pagetop">{{i+1}}</a>
+                        </th>
+                        </span>
+                        <th class = "pagenation" ng-show="pager_start+9 < numOfPage">
+                            <a href="javascript:"  ng-click="pager_start = pager_start+9" class="page-num">次へ></a>
+                        </th>
+                        <th class = "pagenation">
+                            <a href="javascript:"  ng-click="lastPage()" class="page-num">最後へ>></a>
+                        </th>
+                    </span>
+                </table>
+            </div>
+
+             <div class="list-group">
+
+                <div class="list-group-item">
+                    <div class="row">
+
+                        <div class="col-sm-2">
+                            <a href ng-click="tagSort('name', re_tags.name)"><span class = "sort-icon">名前 <span class="icon-size">{{icons.name}}</span></span></a>
+                        </div>
+                        <!--↑
+                            name=!name;
+                            sort('name',name);
+                            という関数を埋め込んでいる。
+                        -->
+                        <div class="col-sm-1">
+                            <a href ng-click="tagSort('univ', re_tags.univ)" class = "sort-icon"><span class="icon-size">大学 {{icons.univ}}</span></a>
+                        </div>
+                        <div class="col-sm-1">
+                            <a href ng-click="tagSort('grade', re_tags.grade)" class = "sort-icon">卒年 <span class="icon-size">{{icons.grade}}</span></a>
+                        </div>
+                        <div class="col-sm-2">
+                            <a href ng-click="tagSort('major', re_tags.major)" class = "sort-icon">専攻 <span class="icon-size">{{icons.major}}</span></a>
+                        </div>
+                        <div class="col-sm-1 sort-icon">
+                            志向
+                        </div>
+                        <div class="col-sm-2 sort-icon">
+                            志望
+                        </div>
+                        <div class="col-sm-1">
+                            <a href ng-click="tagSort('loyalty', re_tags.loyalty)" class = "sort-icon">返信数<span class="icon-size">{{icons.loyalty}}</span></a>
+                            <div>
+                                <input type="button" value="解除" ng-click = ' search.loyalty = "" ' class="btn btn-secondary btn-xs sort-clear">
+                            </div>
+                        </div>
+                        <div class="col-sm-2">
+                            <a href ng-click="tagSort('updated_at', re_tags.updated_at)" class = "sort-icon">更新日<span class="icon-size">{{icons.updated_at}}</span></a>
+                            <div>
+                                <input type="button" value="解除" ng-click = ' search.updated_at = "" ' class="btn btn-secondary btn-xs sort-clear">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!--↓selected.keywordでfilterを行っているため、インクリメンタルサーチとなっているが、filterByKeywordに変えれば、検索ボタンを押して初めて検索するようになる-->
+                <div ng-repeat="item in filteredList = (lineUserList | filter:filterByTag| filter: filterByLoyalty| filter: selected.keyword| filter: filterByDate| filter: filterUser| startFrom: start| limitTo: len) track by $index", class="list-group-item", ng-class="item.product == 1 ? 'oldUser':'newUser'">
+
+                    <div class="row">
+
+                        <div>
+                            <div class="col-sm-2">
+                                <a href="javascript:" ng-click="getUserMessages(item)">{{item.name}}</a>
+                            </div>
+                        </div>
+                         <!--currentUserとは現在選択中のユーザー。どれか他のユーザーを選択中のとき、他のユーザーのタグ追加画面は表示しないようにする。-->
+                        <div ng-repeat="ic in sortList | filter: {category : '!preference'} | filter: {category : '!industry'} ">
+                            <!--ソート項目ごとにループし、ソート項目の順番とユーザーのタグの順番が同じになるようにする。-->
+                            <div ng-class=" (ic.category == 'major') ? 'col-sm-2':'col-sm-1' ">
+                                <span ng-if="item[ic.category]!=null" class="tag-wrapper">
+                                    <a href="javascript:" ng-click="searchByTag(sortTag)">{{sortTag = getSortTag(ic.category, item)}}</a>
+                                </span>
+                                <div class="edit-wrapper">
+
+                                    <!--↓追加用-->
+
+                                    <span ng-if="currentUser.id!=item.id || currentUserTag!=ic.category || showMessage">
+                                        <a ng-click="openTagAddField(item, ic.category)" href="javascript:"><i class="fa fa-plus-square-o" aria-hidden="true"></i></a>
+                                    </span>
+                                    <span ng-if="currentUser.id==item.id && currentUserTag==ic.category && tagAdd && !showMessage">
+                                        <span class = "edit-add-field">
+                                            <a href="javascript:" ng-click="cancelEditTag()"><i class="fa fa-times-circle-o colorGo" aria-hidden="true"></i></a>
+                                            <a ng-click="openTagRemoveField(item, ic.category)" href="javascript:"><i class="fa fa-minus-square-o" aria-hidden="true"></i></a>
+                                            <div>
+                                                <select name="selectedTag" ng-model="currentSelectedTag[currentUser.id]">
+                                                    <option selected="selected" value="" disabled>---タグを選択---</option>
+                                                    <option ng-repeat="tag in userTag|filter: { category:ic.category }" value="{{tag.id}}">{{tag.name}} / {{tag.categoryText}} </option>
+                                                </select>
+                                            </div>
+                                            <div class="edit-add-padding">
+                                                <input type="text" class="tag-text" ng-model="currentTagText[currentUser.id]" placeholder="新規タグ">
+                                            </div>
+                                            <div>
+                                                <input type="submit" ng-click="addNewTag()"  value="追加" class="btn btn-primary btn-xs"/>
+                                            </div>
+                                        </span>
+                                        <div class="edit-padding-bottom"></div>
+                                    </span>
+
+                                    <!--↓削除用-->
+                                    <span ng-if="currentUser.id!=item.id || currentUserTag!=ic.category || showMessage">
+                                        <a ng-click="openTagRemoveField(item, ic.category)" href="javascript:"><i class="fa fa-minus-square-o" aria-hidden="true"></i></a>
+                                    </span>
+                                    <span ng-if="currentUser.id==item.id && currentUserTag==ic.category && tagRemove && !showMessage">
+                                        <span class = "edit-remove-field">
+                                            <a ng-click="openTagAddField(item, ic.category)" href="javascript:"><i class="fa fa-plus-square-o" aria-hidden="true"></i></a>
+                                            <a href="javascript:" ng-click="cancelEditTag()"><i class="fa fa-times-circle-o colorGo" aria-hidden="true"></i></a>
+                                            <div class="edit-remove-padding">
+                                                <select name="selectedTagToRemove" ng-model="currentTagToRemove[currentUser.id]">
+                                                    <option selected="selected" value="" disabled>---タグを選択---</option>
+                                                    <option ng-repeat="tag in item.user_tag" value="{{tag}}">{{getTagName(tag)}}</option>
+                                                </select>
+                                            </div>
+                                            <div>
+                                                <input type="submit" ng-click="removeTag()" value="削除" class="btn btn-border btn-xs text-primary"/>
+                                            </div>
+                                        </span>
+                                        <div class="edit-padding-bottom"></div>
+                                    </span>
+
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div  class="col-sm-1">
+                            <span ng-repeat="preferenceTag in item['preference']">
+                                <a href="javascript:" ng-click="searchByTag(preferenceTag)" class="tag-wrapper">{{preferenceTag}}</a>
+                            </span>
+                            <div class="edit-wrapper">
+
+                                <!--↓追加用-->
+                                <span ng-if=" currentUser.id!=item.id || currentUserTag!='preference' || showMessage">
+                                    <a ng-click="openTagAddField(item, 'preference')" href="javascript:"><i class="fa fa-plus-square-o" aria-hidden="true"></i></a>
+                                </span>
+                                <span ng-if="currentUser.id==item.id && currentUserTag=='preference' && tagAdd && !showMessage">
+                                    <span class = "edit-add-field">
+                                        <a href="javascript:" ng-click="cancelEditTag()"><i class="fa fa-times-circle-o colorGo" aria-hidden="true"></i></a>
+                                        <a ng-click="openTagRemoveField(item, 'preference')" href="javascript:"><i class="fa fa-minus-square-o" aria-hidden="true"></i></a>
+                                        <div>
+                                            <select name="selectedTag" ng-model="currentSelectedTag[currentUser.id]">
+                                                <option selected="selected" value="" disabled>---タグを選択---</option>
+                                                <option ng-repeat="tag in userTag|filter: { category:'preference' }" value="{{tag.id}}">{{tag.name}} / {{tag.categoryText}} </option>
+                                            </select>
+                                        </div>
+                                        <div class="edit-add-padding">
+                                            <input type="text" class="tag-text" ng-model="currentTagText[currentUser.id]" placeholder="新規タグ">
+                                        </div>
+                                        <div>
+                                            <input type="submit" ng-click="addNewTag()" value="追加" class="btn btn-primary btn-xs"/>
+                                        </div>
+                                    </span>
+                                    <div class="edit-padding-bottom"></div>
+                                </span>
+
+                                <!--↓削除用-->
+                                <span ng-if=" currentUser.id!=item.id || currentUserTag!='preference' || showMessage">
+                                    <a ng-click="openTagRemoveField(item, 'preference')" href="javascript:"><i class="fa fa-minus-square-o" aria-hidden="true"></i></a>
+                                </span>
+                                <span ng-if="currentUser.id==item.id && currentUserTag=='preference' && tagRemove && !showMessage">
+                                    <span class = "edit-remove-field">
+                                        <a ng-click="openTagAddField(item, 'preference')" href="javascript:"><i class="fa fa-plus-square-o" aria-hidden="true"></i></a>
+                                        <a href="javascript:" ng-click="cancelEditTag()"><i class="fa fa-times-circle-o colorGo" aria-hidden="true"></i></a>
+                                        <div class="edit-remove-padding">
+                                            <select name="selectedTagToRemove" ng-model="currentTagToRemove[currentUser.id]">
+                                                <option selected="selected" value="" disabled>---タグを選択---</option>
+                                                <option ng-repeat="tag in item.user_tag" value="{{tag}}">{{getTagName(tag)}}</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <input type="submit" ng-click="removeTag()" value="削除" class="btn btn-border btn-xs text-primary"/>
+                                        </div>
+                                    </span>
+                                    <div class="edit-padding-bottom"></div>
+                                </span>
+
+                            </div>
+                        </div>
+
+                        <div class="col-sm-2">
+                            
+                            <span ng-repeat="industryTag in item['industry']" class="tag-wrapper">
+                                <a href="javascript:" ng-click="searchByTag(industryTag)">{{industryTag}}</a>
+                            </span>
+
+                            <div class="edit-wrapper">
+
+                                <!--↓追加用-->
+                                <span ng-if=" currentUser.id!=item.id || currentUserTag!='industry' || showMessage">
+                                    <a ng-click="openTagAddField(item, 'industry')" href="javascript:"><i class="fa fa-plus-square-o" aria-hidden="true"></i></a>
+                                </span>
+                                <span ng-if="currentUser.id==item.id && currentUserTag=='industry' && tagAdd && !showMessage">
+                                <span class = "edit-add-field">
+                                    <a href="javascript:" ng-click="cancelEditTag()"><i class="fa fa-times-circle-o colorGo" aria-hidden="true"></i></a>
+                                    <a ng-click="openTagRemoveField(item, 'industry')" href="javascript:"><i class="fa fa-minus-square-o" aria-hidden="true"></i></a>
+                                    <div>
+                                        <select name="selectedTag" ng-model="currentSelectedTag[currentUser.id]">
+                                            <option selected="selected" value="" disabled>---タグを選択---</option>
+                                            <option ng-repeat="tag in userTag|filter: { category:'industry' }" value="{{tag.id}}">{{tag.name}} / {{tag.categoryText}} </option>
+                                        </select>
+                                    </div>
+                                    <div class="edit-add-padding">
+                                        <input type="text" class="tag-text" ng-model="currentTagText[currentUser.id]" placeholder="新規タグ">
+                                    </div>
+                                    <div>
+                                        <input type="submit" ng-click="addNewTag()" value="追加" class="btn btn-primary btn-xs"/>
+                                    </div>
+                                    </span>
+                                    <div class="edit-padding-bottom"></div>
+                                </span>
+
+                                <!--↓削除用-->
+                                <span ng-if="currentUser.id!=item.id || currentUserTag!='industry' || showMessage">
+                                    <a ng-click="openTagRemoveField(item, 'industry')" href="javascript:"><i class="fa fa-minus-square-o" aria-hidden="true"></i></a>
+                                </span>
+                                <span ng-if="currentUser.id==item.id && currentUserTag=='industry' && tagRemove && !showMessage">
+                                    <span class = "edit-remove-field">
+                                        <a ng-click="openTagAddField(item, 'preference')" href="javascript:"><i class="fa fa-plus-square-o" aria-hidden="true"></i></a>
+                                        <a href="javascript:" ng-click="cancelEditTag()"><i class="fa fa-times-circle-o colorGo" aria-hidden="true"></i></a>
+                                        <div class="edit-remove-padding">
+                                            <select name="selectedTagToRemove" ng-model="currentTagToRemove[currentUser.id]">
+                                                <option selected="selected" value="" disabled>---タグを選択---</option>
+                                                <option ng-repeat="tag in item.user_tag" value="{{tag}}">{{getTagName(tag)}}</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <input type="submit" ng-click="removeTag()" value="削除" class="btn btn-border btn-xs text-primary"/>
+                                        </div>
+                                    </span>
+                                    <div class="edit-padding-bottom"></div>
+                                </span>
+
+                            </div>
+                        </div>
+
+                        <div class="col-sm-1">
+                            <a href="javascript:" ng-click="search.loyalty = item.loyalty">{{item.loyalty}}</a>
+                        </div>
+                        <div class="col-sm-2">
+                            <a href="javascript:" ng-click="search.updated_at = item.updated_at">{{item.updated_at | date : 'yyyy/M/d H:m'}}</a>
+                            <!--dateフィルターを用いると、日付の表示を変えられる。-->
+                        </div>
+
+                        
+
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div id="user_message_wrapper" class="ui-widget-content" ng-show="showMessage">
+        <table class="table" id="user_message_table" style="background-color: #FFF">
+            <thead>
+                <tr>
+                    <th>ユーザー： {{ currentUser.name }}</th>
+                    <th><a href="javascript:" ng-click="closeMessageWindow()"><i class="fa fa-times-circle-o colorGo fa-2x" aria-hidden="true" style="float: right;color: #9E9E9E"></i></a></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="item in userMessages" ng-class="item.is_admin ? 'admin':'user'">
+                    <!--↓itemが管理者のものかどうかを判断し、管理者のものであればclassを変更し、色を変える-->
+                    <td class="message_text"><div ng-class="item.is_admin ? 'admin': 'user'">{{ item.text }}</div></td>
+                    <td class="datetime"><div ng-class="item.is_admin ? 'admin': 'user'">{{ item.datetime }}</div></td>
+                </tr>
+            </tbody>
+         </table>
+            <div id="text_area_wrapper">
+                <textarea id="text_area" name="reply_message" rows="5"></textarea>
+                    <div ng-show="!messageSent">
+                        <select name="studentSupporter" ng-model="asignee">
+                            <option value="荒木">荒木</option>
+                            <option value="新田目">新田目</option>
+                            <option value="小武内">小武内</option>
+                            <option value="金親">金親</option>
+                            <option value="叶">叶</option>
+                            <option value="菊池">菊池</option>
+                            <option value="田辺">田辺</option>
+                            <option value="西田">西田</option>
+                            <option value="藤松">藤松</option>
+                            <option value="渕野">渕野</option>
+                            <option value="牧野">牧野</option>
+                            <option value="宮">宮</option>
+                            <option value="渡辺">渡辺</option>
+                            <option value="藤田">藤田</option>
+                        </select>
+                        <input type="submit" value="送信" ng-click="submitMessage(currentUser.id)" />
+                    </div>
+                <div ng-show="messageSent">
+                    <p>メッセージが送信されました。</p>
+                    <input type="submit" value="続けて送信" ng-click="submitMessage(currentUser.id)" />
+                </div>
+            </div>
+        </div>
+
+        <table class="page-num-table">
+            <th class="cur-page-num">
+                現在のページ：{{cur_page}}/{{numOfPage}}
+            </th>
+            <th class = "pagenation">
+                <a href="javascript:"  ng-click="firstPage();gotoTop()" class="page-num"><<最初へ</a>
+            </th>
+            <th class = "pagenation" ng-show="pager_start>=9">
+                <a href="javascript:" ng-click="pager_start = pager_start-9" class="page-num"><前へ</a>
+            </th>
+            <span class="pagination">
+            <th ng-repeat = "i in arrOfPage(numOfPage)| startFrom: pager_start| limitTo: pager_len">
+                <a href="javascript:" ng-click="pager(i);gotoTop()" class="page-num pagetop">{{i+1}}</a>
+            </th>
+            </span>
+            <th class = "pagenation" ng-show="pager_start+9 < numOfPage">
+                <a href="javascript:"  ng-click="pager_start = pager_start+9" class="page-num">次へ></a>
+            </th>
+            <th class = "pagenation">
+               <a href="javascript:"  ng-click="lastPage();gotoTop()" class="page-num">最後へ>></a>
+            </th>
+        </table>
+
+    </div>
+</div>
+</div>
+<script src = "https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular.min.js"></script>
+<script src = "userSearchController.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+</body>

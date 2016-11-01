@@ -1,0 +1,237 @@
+.list-group-item.ng-scope.newUser {
+    /*background-color: rgba(10,50,225,0.1)*/
+    background-color: rgba(63,81,181,0.10)
+}
+
+.sort-icon{
+  text-decoration: none;
+}
+
+.tag-wrapper{
+  background-color: peachpuff;
+  padding: 3px;
+  margin: 2px;
+}
+
+.colorGo {
+  color: #db4a39;
+}
+
+#user_message_wrapper #text_area_wrapper{
+  padding:10px; 
+  text-align: right;
+}
+
+#user_message_wrapper #text_area_wrapper #text_area{
+  width:100%;
+  min-width: 500px;
+}
+
+#line_recent_message_wrapper #text_area_wrapper{
+  padding:10px; 
+  text-align: right;
+}
+
+#line_recent_message_wrapper #text_area_wrapper #text_area{
+  width:100%;
+  min-width: 500px;
+}
+
+.talk_list .username{
+  width: 10%; 
+}
+.talk_list .message_text{
+  width: 75%;
+  background-color: #0F0;
+}
+.talk_list .datetime{
+  width: 15%; 
+}
+
+#user_message_wrapper{
+  position: fixed;
+  top: 100px;
+  right: 30px;
+  box-shadow: 0px 0px 5px #AAAAAA;
+  z-index: 1000;
+  height: 500px;
+  overflow: scroll;
+}
+
+table#message_table tr.user{
+  background-color: #FEE;
+}
+
+table#message_table tr.admin{
+  background-color: #FFF;
+}
+
+table#line_message_table tr{
+  position: relative;
+}
+
+table#line_message_table tr.event{
+  background-color: #FEE;
+}
+
+table#line_message_table tr.question{
+  background-color: #EFE;
+}
+
+
+table#line_message_table td.username{
+
+}
+
+table#line_message_table td.usertag{
+  min-width: 30px;
+  color: #00F;
+}
+
+table#line_message_table td.message_text{
+
+}
+
+table#line_message_table td.datetime{
+
+}
+
+table#line_searched_message_table tr.admin{
+  background-color: #FEE;
+}
+
+table#line_reply_message_table td.question_text{
+  width: 300px;
+}
+
+table#line_reply_message_table td.answer_text{
+  width: 300px;
+}
+
+table#line_reply_message_table tr{
+  background-color: #FCFCFC;
+}
+
+table#user_message_table td.message_text{
+  width: 500px;
+}
+
+table#user_message_table td.message_text div.admin{
+
+}
+
+table#user_message_table td.message_text div.user{
+
+}
+
+table#user_message_table td.datetime{
+  width: 100px;
+}
+
+table#user_message_table tr{
+  background-color: #FCFCFC;
+}
+
+table#user_message_table tr.admin{
+  background-color: #FFE0E0;
+}
+
+.edit-wrapper{
+    padding-top: 20px;
+}
+
+.edit-add-field{
+    position: absolute;z-index: 1;
+    background-color: white;
+}
+
+.edit-add-padding{
+    padding: 3px 0px;
+}
+
+.edit-remove-padding{
+    padding-bottom: 3px;
+}
+
+.edit-padding-bottom{
+    padding-bottom: 90px;
+}
+
+.edit-remove-field{
+    position: absolute;z-index: 1;
+    padding-right: 30px;
+    background-color: white;
+}
+
+.btn-ghost{
+    background: transparent;
+}
+
+.btn-ghost.btn-default{
+    color:#777;
+}
+
+.btn-ghost.btn-primary{
+    color:#337ab7;
+}
+
+.btn-ghost.btn-default:hover,
+.btn-ghost.btn-primary:hover{
+    color:#fff;
+}
+
+.btn-ghost.btn-white{
+    color:#fff;
+    border:1px solid #fff;
+}
+
+.btn-ghost.btn-white{
+    color:#333;
+    background:#fff;
+}
+
+.btn-border{
+    background:#fff;
+    border-color:#337ab7;
+}
+
+.search-btn-layout{
+    float: right;
+}
+
+.user-list-search-field{
+    margin: 10px;
+}
+
+.page-num{
+    margin: 0px 2px;
+}
+
+.cur-page-num{
+    margin: 5px;
+    padding: 0px 2px;
+}
+
+.page-num-table{
+    float: right;
+}
+
+.user-list-table{
+    margin-bottom: 0px;
+}
+
+label{
+    margin: 0px 10px;
+}
+
+.font-size-xs{
+    font-size: x-small;
+}
+
+.show-head{
+    margin: 5px;
+}
+
+.col-right{
+    float: right;
+}

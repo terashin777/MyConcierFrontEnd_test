@@ -1,0 +1,280 @@
+@@ -1,12 +1,10 @@
+<div class="container-fluid">
+        <div class="row user-list-search-field">
+            <div class="col-lg-12 col-xs-12">
+                
+                <div class="bg-primary"></div>
+
+                <form name="frm">
+                    <div class="list-group">
+
+                        <div class="list-group-item active">
+                            <div class="row">
+                                <div class="col-sm-12">
+@@ -22,7 +20,7 @@
+                                </div>
+                                <div class="col-sm-2">
+                                    <label>
+                                        <input type="button" value="すべてチェック" ng-model="allFrags.univ_level" ng-click = "allFrags.univ_level=true;onChange('univ_level',allFrags.univ_level)" name="allFrags.univ_level" class="btn btn-secondary btn-xs">
+                                        <input type="button" value="全てチェック" ng-model="allFrags.univ_level" ng-click = "allFrags.univ_level=true;onChange('univ_level',allFrags.univ_level)" name="allFrags.univ_level" class="btn btn-secondary btn-xs">
+                                    </label>
+                                    </br>
+                                    <label>
+@@ -50,7 +48,7 @@
+                                </div>
+                                <div class="col-sm-2">
+                                    <label>
+                                        <input type="button" value="すべてチェック" ng-model="allFrags.grade" ng-click = "allFrags.grade=true;onChange('grade',allFrags.grade)" name="allFrags.grade" class="btn btn-secondary btn-xs">
+                                        <input type="button" value="全てチェック" ng-model="allFrags.grade" ng-click = "allFrags.grade=true;onChange('grade',allFrags.grade)" name="allFrags.grade" class="btn btn-secondary btn-xs">
+                                    </label>
+                                    </br>
+                                    <label>
+@@ -79,7 +77,7 @@
+                                <div class="col-sm-2">
+                                    <div>
+                                    <label>
+                                        <input type="button" value="すべてチェック" ng-model="allFrags.major" ng-click = "allFrags.major=true;onChange('major',allFrags.major)" name="allFrags.major" class="btn btn-secondary btn-xs">
+                                        <input type="button" value="全てチェック" ng-model="allFrags.major" ng-click = "allFrags.major=true;onChange('major',allFrags.major)" name="allFrags.major" class="btn btn-secondary btn-xs">
+                                    </label>
+                                    </br>
+                                    <label>
+@@ -113,7 +111,7 @@
+                                </div>
+                                <div class="col-sm-2">
+                                <label>
+                                    <input type="button" value="すべてチェック" ng-model="allFrags.preference" ng-click = "allFrags.preference=true;onChange('preference',allFrags.preference)" name="allFrags.preference" class="btn btn-secondary btn-xs">
+                                    <input type="button" value="全てチェック" ng-model="allFrags.preference" ng-click = "allFrags.preference=true;onChange('preference',allFrags.preference)" name="allFrags.preference" class="btn btn-secondary btn-xs">
+                                </label>
+                                </br>
+                                <label>
+@@ -141,7 +139,7 @@
+                                </div>
+                                <div class="col-sm-2">
+                                <label>
+                                    <input type="button" value="すべてチェック" ng-model="allFrags.industry" ng-click = "allFrags.industry=true;onChange('industry',allFrags.industry)" name="allFrags.industry" class="btn btn-secondary btn-xs">
+                                    <input type="button" value="全てチェック" ng-model="allFrags.industry" ng-click = "allFrags.industry=true;onChange('industry',allFrags.industry)" name="allFrags.industry" class="btn btn-secondary btn-xs">
+                                </label>
+                                </br>
+                                <label>
+@@ -158,7 +156,7 @@
+                                    <!-- <input type="checkbox" ng-model="user_univ" value="{{tag.name}}" name="univ_search"> -->
+                                    {{tag.name}}
+                                </label>
+                                <label ng-repeat="tag in userTag|filter: { category:'industry' }| limitTo :  (userTag|filter : { category:'industry' }).length-16 :16| filter : '!（旧）'" ng-show="industryShow">
+                                <label ng-repeat="tag in userTag|filter: { category:'industry' }| startFrom: 16| filter : '!（旧）'" ng-show="industryShow">
+                                    <input type="checkbox" ng-model="selected.industry[tag.name]" ng-checked="allFrags.industry" name="industry_search">
+                                    <!-- <input type="checkbox" ng-model="user_univ" value="{{tag.name}}" name="univ_search"> -->
+                                    {{tag.name}}
+@@ -176,7 +174,7 @@
+                                </div>
+                                <div class="col-sm-2">
+                                    <label>
+                                        <input type="button" value="すべてチェック" ng-model="allFrags.sex" ng-click = "allFrags.sex=true;onChange('sex',allFrags.sex)" name="allFrags.sex" class="btn btn-secondary btn-xs">
+                                        <input type="button" value="全てチェック" ng-model="allFrags.sex" ng-click = "allFrags.sex=true;onChange('sex',allFrags.sex)" name="allFrags.sex" class="btn btn-secondary btn-xs">
+                                    </label>
+                                    </br>
+                                    <label>
+@@ -200,7 +198,7 @@
+                            </div>
+                        </div>
+
+                        <div class="list-group-item">
+                        <div class="list-group-item" id="top">
+                            <div class="row">
+                                <div class="col-sm-6">
+                                最小やりとり数　
+@@ -274,39 +272,58 @@
+    </div>
+-->
+
+                    <div class="row show-head">
+            <div class="row show-head" style="position: relative">
+
+                        <div class="col-sm-2">
+                            <button ng-click="all=true;allCheck(all)" class="btn btn-primary btn-xs">
+                                すべてチェック
+                            </button>
+                            <button ng-click="all=false;allCheck(all)" class="btn btn-border btn-xs">
+                                <span class="text-primary">全解除</span>
+                            </button>
+                        </div>
+                        <div class="col-sm-4">
+                        </div>
+                        <div class="col-sm-4">
+                            <span class="col-right">
+                                ページ当たり表示する件数
+                                    <select  ng-model="len" name="pageValue" ng-change="calPage(len)">
+                                        <option value="10">10</option>
+                                        <option value="20">20</option>
+                                        <option value="50" ng-selected = "true">50</option>
+                                        <!--ng-selectedをtrueにしないと選択されない-->
+                                        <option value="100">100</option>
+                                        <option value="200">200</option>
+                                        <option value="500">500</option>
+                                        <option ng-value= searchedValue>全件</option>
+                                    </select>
+                            </span>
+                        </div>
+                        <div class="col-sm-2 ">
+                            <span class="col-right">
+                                現在のページ：{{cur_page}}/{{numOfPage}}
+                            </span>
+                        </div>
+                    </div>
+                <div class="col-sm-2">
+                    <button ng-click="all=true;allCheck(all)" class="btn btn-primary btn-xs">
+                        全てチェック
+                    </button>
+                    <button ng-click="all=false;allCheck(all)" class="btn btn-border btn-xs">
+                        <span class="text-primary">全解除</span>
+                    </button>
+                </div>
+
+                <div class="col-sm-3">
+                    <span class="col-right">
+                        ページ当たり表示する件数
+                            <select  ng-model="len" name="pageValue" ng-change="calPage(len)">
+                                <option value="10">10</option>
+                                <option value="20">20</option>
+                                <option value="50" ng-selected = "true">50</option>
+                                <!--ng-selectedをtrueにしないと選択されない-->
+                                <option value="100">100</option>
+                                <option value="200">200</option>
+                                <option value="500">500</option>
+                                <option ng-value= searchedValue>全件</option>
+                            </select>
+                    </span>
+                </div>
+
+                <table class="page-num-table col-sm-7" id = "paginate-table">
+                    <span>
+                        <th class="cur-page-num">
+                            現在のページ：{{cur_page}}/{{numOfPage}}
+                        </th>
+                        <th class = "pagenation">
+                            <a href="javascript:"  ng-click="firstPage()" class="page-num"><<最初へ</a>
+                        </th>
+                        <th class = "pagenation" ng-show="pager_start>=9">
+                            <a href="javascript:" ng-click="pager_start = pager_start-9" class="page-num"><前へ</a>
+                        </th>
+                        <span class="pagination">
+                        <th ng-repeat = "i in arrOfPage(numOfPage)| startFrom: pager_start| limitTo: pager_len">
+                            <a href="javascript:" ng-click="pager(i)" class="page-num pagetop">{{i+1}}</a>
+                        </th>
+                        </span>
+                        <th class = "pagenation" ng-show="pager_start+9 < numOfPage">
+                            <a href="javascript:"  ng-click="pager_start = pager_start+9" class="page-num">次へ></a>
+                        </th>
+                        <th class = "pagenation">
+                            <a href="javascript:"  ng-click="lastPage()" class="page-num">最後へ>></a>
+                        </th>
+                    </span>
+                </table>
+            </div>
+
+             <div class="list-group">
+
+@@ -314,7 +331,7 @@
+                    <div class="row">
+
+                        <div class="col-sm-2">
+                            <a href ng-click="tagSort('name', re_tags.name)"><span class = "sort-icon">名前 {{icons.name}}</span></a>
+                            <a href ng-click="tagSort('name', re_tags.name)" class = "sort-icon">名前<span class="icon-size">{{icons.name}}</span></a>
+                        </div>
+                        <!--↑
+                            name=!name;
+@@ -322,33 +339,37 @@
+                            という関数を埋め込んでいる。
+                        -->
+                        <div class="col-sm-1">
+                            <a href ng-click="tagSort('univ', re_tags.univ)" class = "sort-icon">大学 {{icons.univ}}</a>
+                            <a href ng-click="tagSort('univ', re_tags.univ)" class = "sort-icon">大学<span class="icon-size">{{icons.univ}}</span></a>
+                        </div>
+                        <div class="col-sm-1">
+                            <a href ng-click="tagSort('grade', re_tags.grade)" class = "sort-icon">卒年 {{icons.grade}}</a>
+                            <a href ng-click="tagSort('grade', re_tags.grade)" class = "sort-icon">卒年<span class="icon-size">{{icons.grade}}</span></a>
+                        </div>
+                        <div class="col-sm-1">
+                            <a href ng-click="tagSort('major', re_tags.major)" class = "sort-icon">専攻 {{icons.major}}</a>
+                        <div class="col-sm-2">
+                            <a href ng-click="tagSort('major', re_tags.major)" class = "sort-icon">専攻<span class="icon-size">{{icons.major}}</span></a>
+                        </div>
+                        <div class="col-sm-1">
+                        <div class="col-sm-1 sort-icon">
+                            志向
+                        </div>
+                        <div class="col-sm-2">
+                        <div class="col-sm-2 sort-icon">
+                            志望
+                        </div>
+                        <div class="col-sm-2">
+                            <a href ng-click="tagSort('loyalty', re_tags.loyalty)" class = "sort-icon">やり取り{{icons.loyalty}}</a>
+                            <input type="button" value="絞込み解除" ng-click = ' search.loyalty = "" ' class="btn btn-secondary btn-xs">
+                        <div class="col-sm-1">
+                            <a href ng-click="tagSort('loyalty', re_tags.loyalty)" class = "sort-icon">返信数<span class="icon-size">{{icons.loyalty}}</span></a>
+                            <div>
+                                <input type="button" value="解除" ng-click = ' search.loyalty = "" ' class="btn btn-secondary btn-xs sort-clear">
+                            </div>
+                        </div>
+                        <div class="col-sm-2">
+                            <a href ng-click="tagSort('updated_at', re_tags.updated_at)" class = "sort-icon">更新日 {{icons.updated_at}}</a>
+                            <input type="button" value="絞込み解除" ng-click = ' search.updated_at = "" ' class="btn btn-secondary btn-xs">
+                            <a href ng-click="tagSort('updated_at', re_tags.updated_at)" class = "sort-icon">更新日<span class="icon-size">{{icons.updated_at}}</span></a>
+                            <div>
+                                <input type="button" value="解除" ng-click = ' search.updated_at = "" ' class="btn btn-secondary btn-xs sort-clear">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!--↓selected.keywordでfilterを行っているため、インクリメンタルサーチとなっているが、filterByKeywordに変えれば、検索ボタンを押して初めて検索するようになる-->
+                <div ng-repeat="item in filteredList = (lineUserList | filter:filterByTag| filter: filterByLoyalty| filter: selected.keyword| filter: filterByDate| filter: filterUser| limitTo: len: start) track by $index", class="list-group-item">
+                <div ng-repeat="item in filteredList = (lineUserList | filter:filterByTag| filter: filterByLoyalty| filter: selected.keyword| filter: filterByDate| filter: filterUser| startFrom: start| limitTo: len) track by $index", class="list-group-item">
+
+                    <div class="row">
+
+@@ -360,7 +381,7 @@
+                         <!--currentUserとは現在選択中のユーザー。どれか他のユーザーを選択中のとき、他のユーザーのタグ追加画面は表示しないようにする。-->
+                        <div ng-repeat="ic in sortList | filter: {category : '!preference'} | filter: {category : '!industry'} ">
+                            <!--ソート項目ごとにループし、ソート項目の順番とユーザーのタグの順番が同じになるようにする。-->
+                            <div class="col-sm-1">
+                            <div ng-class=" (ic.category == 'major') ? 'col-sm-2':'col-sm-1' ">
+                                <span ng-if="item[ic.category]!=null" class="tag-wrapper">
+                                    <a href="javascript:" ng-click="searchByTag(sortTag)">{{sortTag = getSortTag(ic.category, item)}}</a>
+                                </span>
+@@ -527,7 +548,7 @@
+                            </div>
+                        </div>
+
+                        <div class="col-sm-2">
+                        <div class="col-sm-1">
+                            <a href="javascript:" ng-click="search.loyalty = item.loyalty">{{item.loyalty}}</a>
+                        </div>
+                        <div class="col-sm-2">
+@@ -594,21 +615,21 @@
+                現在のページ：{{cur_page}}/{{numOfPage}}
+            </th>
+            <th class = "pagenation">
+                <a href="#"  ng-click="firstPage()" class="page-num"><<最初へ</a>
+                <a href="javascript:"  ng-click="firstPage();gotoTop()" class="page-num"><<最初へ</a>
+            </th>
+            <th class = "pagenation" ng-show="pager_start>=9">
+                <a href="#cancel"  ng-click="pager_start = pager_start-9" class="page-num"><前へ</a>
+                <a href="javascript:" ng-click="pager_start = pager_start-9" class="page-num"><前へ</a>
+            </th>
+            <span class="pagination">
+            <th ng-repeat = "i in arrOfPage(numOfPage)| limitTo: pager_len: pager_start">
+                <a href="#" ng-click="pager(i)" class="page-num">{{i+1}}</a>
+            <th ng-repeat = "i in arrOfPage(numOfPage)| startFrom: pager_start| limitTo: pager_len">
+                <a href="javascript:" ng-click="pager(i);gotoTop()" class="page-num pagetop">{{i+1}}</a>
+            </th>
+            </span>
+            <th class = "pagenation" ng-show="pager_start+9 < numOfPage">
+                <a href="#cancel"  ng-click="pager_start = pager_start+9" class="page-num">次へ></a>
+                <a href="javascript:"  ng-click="pager_start = pager_start+9" class="page-num">次へ></a>
+            </th>
+            <th class = "pagenation">
+                <a href="#"  ng-click="lastPage()" class="page-num">最後へ>></a>
+                <a href="javascript:"  ng-click="lastPage();gotoTop()" class="page-num">最後へ>></a>
+            </th>
+        </table>
