@@ -1021,14 +1021,14 @@ angular.module('concierAdminApp',[])
         }
     };
 
-    $scope.orderMajor = function(industry) {
-        var order = { '機械': 0, '電気': 1, '情報': 2, '建築': 3 };
-        return order[userTag.name];
+    $scope.majorOrder = function(major) {
+        var order = { '機械': 0, '電気': 1, '情報': 2, '建築・土木・社会工学': 3 };
+        return order[major.name];
     };
 
-    $scope.orderIndustry = function(student) {
-        var courses = { '超難関': 0, 'ハイレベル': 1, 'スタンダード': 2 };
-        return courses[student.course];
+    $scope.industryOrder = function(industry) {
+        var order = { '機械・重工': 0, '自動車' : 1, '自動車部品': 2, '鉄道': 3, '輸送用機器': 4, '電機機器': 5, 'テレビ': 6, '精密機器': 7, '住宅設備機器': 8, '医療機器': 9, 'その他メーカー': 10, '通信サービス': 11, 'SIer': 12, 'ゲーム': 13, '建築': 14, '化学': 15, '医薬品': 16, '化粧品': 17, '電力・ガス': 18, '鉄鋼': 19, '素材':20 };
+        return order[industry.name];
     };
 
 });

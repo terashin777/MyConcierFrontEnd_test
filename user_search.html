@@ -104,15 +104,15 @@
                                     </div>
                                 </div>
                                 <div class="col-sm-9">
+                                <label ng-repeat="tag in userTag|filter: { category:'major_sci' }| orderBy : majorOrder ">
+                                    <input type="checkbox" ng-model="selected.major[tag.name]" ng-checked="allFrags.major" name="major_search">
+                                  <!-- <input type="checkbox" ng-model="user_univ" value="{{tag.name}}" name="univ_search"> -->
+                                        {{tag.name}}
+                                </label>
                                 <label>
                                     <input type="checkbox" ng-model="selected.major['文系']" ng-checked="allFrags.major" name="major_search">
                                     <!-- <input type="checkbox" ng-model="user_univ" value="{{tag.name}}" name="univ_search"> -->
                                         文系
-                                </label>
-                                <label ng-repeat="tag in userTag|filter: { category:'major_sci' }">
-                                    <input type="checkbox" ng-model="selected.major[tag.name]" ng-checked="allFrags.major" name="major_search">
-                                  <!-- <input type="checkbox" ng-model="user_univ" value="{{tag.name}}" name="univ_search"> -->
-                                        {{tag.name}}
                                 </label>
                                 </div>
                             </div>
@@ -165,12 +165,13 @@
                                 </label>
                                 </div>
                                 <div class="col-sm-9">
-                                <label ng-repeat="tag in userTag|filter: { category:'industry' }| filter : '!（旧）'| limitTo : 16 ">
+                                <!--↓フィルターは適用する順番に気をつける。基本的にはorderByで並び替えをしてから絞り込む。-->
+                                <label ng-repeat="tag in userTag|filter: { category:'industry' }| filter : '!（旧）'| orderBy : industryOrder| limitTo : 16 ">
                                     <input type="checkbox" ng-model="selected.industry[tag.name]" ng-checked="allFrags.industry" name="industry_search">
                                     <!-- <input type="checkbox" ng-model="user_univ" value="{{tag.name}}" name="univ_search"> -->
                                     {{tag.name}}
                                 </label>
-                                <label ng-repeat="tag in userTag|filter: { category:'industry' }| startFrom: 16| filter : '!（旧）'" ng-show="industryShow">
+                                <label ng-repeat="tag in userTag|filter: { category:'industry' }| filter : '!（旧）'| orderBy : industryOrder| startFrom: 16 " ng-show="industryShow">
                                     <input type="checkbox" ng-model="selected.industry[tag.name]" ng-checked="allFrags.industry" name="industry_search">
                                     <!-- <input type="checkbox" ng-model="user_univ" value="{{tag.name}}" name="univ_search"> -->
                                     {{tag.name}}
