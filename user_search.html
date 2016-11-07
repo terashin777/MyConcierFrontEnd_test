@@ -46,7 +46,7 @@
                                     </label>
                                 </div>
                                 <div class="col-sm-9">
-                                    <label ng-repeat="tag in univGroupList">
+                                    <label ng-repeat="tag in univGroupList | tagFilter:univGroupList">
                                         <input type="checkbox" ng-model="selected.univ_level[tag.univ_level]" ng-checked="allFrags.univ_level" name="univ_level_search">
                                         <!-- <input type="checkbox" ng-model="user_univ" value="{{tag.name}}" name="univ_search"> -->
                                             {{tag.group}}
@@ -74,7 +74,7 @@
                                     </label>
                                 </div>
                                 <div class="col-sm-9">
-                                    <label ng-repeat="tag in userTag|filter: { category:'grade' }">
+                                    <label ng-repeat="tag in filteredUserTag = (userTag|filter: { category:'grade' }) | filter: filterTagProp">
                                         <input type="checkbox" ng-model="selected.grade[tag.name]" ng-checked="allFrags.grade" name="grade_search">
                                         <!-- <input type="checkbox" ng-model="user_univ" value="{{tag.name}}" name="univ_search"> -->
                                             {{tag.name}}
@@ -104,7 +104,7 @@
                                     </div>
                                 </div>
                                 <div class="col-sm-9">
-                                <label ng-repeat="tag in userTag|filter: { category:'major_sci' }| orderBy : majorOrder ">
+                                <label ng-repeat="tag in userTag|filter: { category:'major_sci' } | tagFilter:userTag | filter: filterTagProp | orderBy : majorOrder ">
                                     <input type="checkbox" ng-model="selected.major[tag.name]" ng-checked="allFrags.major" name="major_search">
                                   <!-- <input type="checkbox" ng-model="user_univ" value="{{tag.name}}" name="univ_search"> -->
                                         {{tag.name}}
@@ -137,7 +137,7 @@
                                 </label>
                                 </div>
                                 <div class="col-sm-9">
-                                <label ng-repeat="tag in userTag|filter: { category:'preference' }">
+                                <label ng-repeat="tag in userTag|filter: { category:'preference' } | filter: filterTagProp">
                                   <input type="checkbox" ng-model="selected.preference[tag.name]" ng-checked="allFrags.preference" name="preference_search">
                                   <!-- <input type="checkbox" ng-model="user_univ" value="{{tag.name}}" name="univ_search"> -->
                                     {{tag.name}}
@@ -166,12 +166,12 @@
                                 </div>
                                 <div class="col-sm-9">
                                 <!--↓フィルターは適用する順番に気をつける。基本的にはorderByで並び替えをしてから絞り込む。-->
-                                <label ng-repeat="tag in userTag|filter: { category:'industry' }| filter : '!（旧）'| orderBy : industryOrder| limitTo : 16 ">
+                                <label ng-repeat="tag in userTag|filter: { category:'industry' }| filter : '!（旧）' | filter: filterTagProp | orderBy : industryOrder| limitTo : 16 ">
                                     <input type="checkbox" ng-model="selected.industry[tag.name]" ng-checked="allFrags.industry" name="industry_search">
                                     <!-- <input type="checkbox" ng-model="user_univ" value="{{tag.name}}" name="univ_search"> -->
                                     {{tag.name}}
                                 </label>
-                                <label ng-repeat="tag in userTag|filter: { category:'industry' }| filter : '!（旧）'| orderBy : industryOrder| startFrom: 16 " ng-show="industryShow">
+                                <label ng-repeat="tag in userTag|filter: { category:'industry' }| filter : '!（旧）' | filter: filterTagProp | orderBy : industryOrder| startFrom: 16 " ng-show="industryShow">
                                     <input type="checkbox" ng-model="selected.industry[tag.name]" ng-checked="allFrags.industry" name="industry_search">
                                     <!-- <input type="checkbox" ng-model="user_univ" value="{{tag.name}}" name="univ_search"> -->
                                     {{tag.name}}
@@ -239,7 +239,7 @@
                         <div class="list-group-item">
                             <div class="row">
                                 <div class="col-sm-4">
-                                全表示件数：{{searchedValue = (lineUserList | filter:filterByTag| filter: filterByLoyalty| filter: selected.keyword| filter: filterUser ).length}}
+                                全表示件数：{{searchedValue = (lineUserList | filter:filterByTag| filter: filterByLoyalty| filter: selected.keyword| filter: filterByDate| filter: filterUser).length}}
                                 </div>
                                 <div  class="col-sm-7">
                                 </div>
@@ -384,7 +384,7 @@
                 </div>
                 
                 <!--↓selected.keywordでfilterを行っているため、インクリメンタルサーチとなっているが、filterByKeywordに変えれば、検索ボタンを押して初めて検索するようになる-->
-                <div ng-repeat="item in filteredList = (lineUserList | filter:filterByTag| filter: filterByLoyalty| filter: selected.keyword| filter: filterByDate| filter: filterUser| startFrom: start| limitTo: len) track by $index", class="list-group-item", ng-class="item.product == 1 ? 'oldUser':'newUser'">
+                <div ng-repeat="item in filteredList = ( lineUserList | filter:filterByTag| filter: filterByLoyalty| filter: selected.keyword| filter: filterByDate| filter: filterUser| startFrom: start| limitTo: len ) track by $index", class="list-group-item", ng-class="item.product == 1 ? 'oldUser':'newUser'">
 
                     <div class="row">
 
@@ -442,7 +442,7 @@
                                                 </select>
                                             </div>
                                             <div>
-                                                <input type="submit" ng-click="removeTag()" value="削除" class="btn btn-border btn-xs text-primary"/>
+                                                <input type="submit" ng-click="removeTag(ic.category)" value="削除" class="btn btn-border btn-xs text-primary"/>
                                             </div>
                                         </span>
                                         <div class="edit-padding-bottom"></div>
@@ -498,7 +498,7 @@
                                             </select>
                                         </div>
                                         <div>
-                                            <input type="submit" ng-click="removeTag()" value="削除" class="btn btn-border btn-xs text-primary"/>
+                                            <input type="submit" ng-click="removeTag('preference')" value="削除" class="btn btn-border btn-xs text-primary"/>
                                         </div>
                                     </span>
                                     <div class="edit-padding-bottom"></div>
@@ -554,7 +554,7 @@
                                             </select>
                                         </div>
                                         <div>
-                                            <input type="submit" ng-click="removeTag()" value="削除" class="btn btn-border btn-xs text-primary"/>
+                                            <input type="submit" ng-click="removeTag('industry')" value="削除" class="btn btn-border btn-xs text-primary"/>
                                         </div>
                                     </span>
                                     <div class="edit-padding-bottom"></div>

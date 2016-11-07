@@ -23,6 +23,19 @@ angular.module('concierAdminApp',[])
         };
     })
 
+    .filter('tagFilter', function() {
+        // 1引数callbackを受け取れるように
+        return function(tag, tagList) {
+            // 加工対象の値が配列であるかを判定
+            if (tagList.indexOf(tag) === -1) {
+                return tag;
+            }
+            else {
+                return ;
+            }
+        };
+    })
+
 
 /*
     //↓ページの読み込み完了時に処理を実行するといったやり方ができないためカスタムのディレクティブを用いる。
@@ -46,7 +59,7 @@ angular.module('concierAdminApp',[])
         };
     })
 */
-    .controller('UserSearchCtrl', function($scope,$http,$filter){
+    .controller('UserSearchCtrl', function($scope,$http,$filter,$location,$anchorScroll){
 
     $("#user_message_wrapper").draggable();
 
@@ -149,159 +162,200 @@ angular.module('concierAdminApp',[])
 
     $scope.getLineUserList = function(){
         $http({
-            url: LINE_API_URL+"/user_tag?productID="+$scope.selectedProductId+"&token=nishishinjuku",
+            url: LINE_API_URL+"/user_tag?productID=1&token=nishishinjuku",
             method:"GET",
             datatype:"json"
         }).
         success(function(d, status, headers, config) {
-            for(var tIdx in d){
-                //ユーザータグリストの中のcategoryを引数として渡し，それをswichで場合わけして，実際に表示する文字列に直している。
-                d[tIdx].categoryText = categoryMapper(d[tIdx].category);
-            }
-            //↓ここにユーザータグが入る
-            $scope.userTag = d;
-
-            //var url;
-            //if(!$scope.startDate){
-                //url = LINE_API_URL+"/product_user?productID="+$scope.selectedProductId+"&token=nishishinjuku";
-            //}else{
-                //url = LINE_API_URL+"/product_user?productID="+$scope.selectedProductId+"&startDate="+$scope.startDate+"&token=nishishinjuku"; 
-            //}
-            
-            var oldUrl = LINE_API_URL+"/product_user?productID=1&token=nishishinjuku";
-            var newUrl = LINE_API_URL+"/product_user?productID=2&token=nishishinjuku";
-
+            var oldTag = d;
             $http({
-                url: oldUrl,
-                method: "GET",
-                dataType: "json"
+                url: LINE_API_URL+"/user_tag?productID=2&token=nishishinjuku",
+                method:"GET",
+                datatype:"json"
             }).
-            success(function(data, status, headers, config) {
-                var oldUser = data; //ここにユーザーリストが入る
+            success(function(d, status, headers, config) {
+                var newTag = d;
+                newTag = newTag.concat(oldTag);
+                for(var tIdx in newTag){
+                    //ユーザータグリストの中のcategoryを引数として渡し，それをswichで場合わけして，実際に表示する文字列に直している。
+                    newTag[tIdx].categoryText = categoryMapper(newTag[tIdx].category);
+                }
+                //↓ここにユーザータグが入る
+                $scope.userTag = newTag;
+
+                //var url;
+                //if(!$scope.startDate){
+                    //url = LINE_API_URL+"/product_user?productID="+$scope.selectedProductId+"&token=nishishinjuku";
+                //}else{
+                    //url = LINE_API_URL+"/product_user?productID="+$scope.selectedProductId+"&startDate="+$scope.startDate+"&token=nishishinjuku"; 
+                //}
+                
+                var oldUrl = LINE_API_URL+"/product_user?productID=1&token=nishishinjuku";
+                var newUrl = LINE_API_URL+"/product_user?productID=2&token=nishishinjuku";
+
                 $http({
-                    url: newUrl,
+                    url: oldUrl,
                     method: "GET",
                     dataType: "json"
                 }).
                 success(function(data, status, headers, config) {
-                    var newUser = data;
-                    $scope.lineUserList = oldUser.concat(newUser); //ここにユーザーリストが入る
-                    $scope.numOfUser = Object.keys($scope.lineUserList).length;
-                    $scope.numOfAdd = Object.keys($scope.addList).length ;
-                    //↓ユーザーリストの1人1人にaddlistのタグを追加する（空のプロパティを用意する）。
-                    //↓view側でソート項目と同じ順番に表示されるようにここでは明示的にループをまわして、順番どおりに配列が作られるようにしている。
-                    //↓for～inだと順番が変わってしまう恐れがある。
-                    for(var userIdx=0 ; userIdx<$scope.numOfUser ; userIdx++){
-                        for(var addIdx=0; addIdx<$scope.numOfAdd ; addIdx++){
-                            //↓if文のelseは忘れない。
-                            if($scope.addList[addIdx]["category"] === "preference" || $scope.addList[addIdx]["category"] === "industry"){
-                                $scope.lineUserList[userIdx][$scope.addList[addIdx]["category"]] = [];
+                    var oldUser = data; //ここにユーザーリストが入る
+                    $http({
+                        url: newUrl,
+                        method: "GET",
+                        dataType: "json"
+                    }).
+                    success(function(data, status, headers, config) {
+                        var newUser = data;
+                        $scope.lineUserList = oldUser.concat(newUser); //ここにユーザーリストが入る
+                        //$scope.lineUserList = newUser;
+                        $scope.numOfUser = Object.keys($scope.lineUserList).length;
+                        $scope.numOfAdd = Object.keys($scope.addList).length ;
+                        //↓ユーザーリストの1人1人にaddlistのタグを追加する（空のプロパティを用意する）。
+                        //↓view側でソート項目と同じ順番に表示されるようにここでは明示的にループをまわして、順番どおりに配列が作られるようにしている。
+                        //↓for～inだと順番が変わってしまう恐れがある。
+                        for(var userIdx=0 ; userIdx<$scope.numOfUser ; userIdx++){
+                            for(var addIdx=0; addIdx<$scope.numOfAdd ; addIdx++){
+                                //↓if文のelseは忘れない。
+                                if($scope.addList[addIdx]["category"] === "preference" || $scope.addList[addIdx]["category"] === "industry"){
+                                    $scope.lineUserList[userIdx][$scope.addList[addIdx]["category"]] = [];
+                                }
+                                else if($scope.addList[addIdx]["category"] === "updated_at"){
+                                    //↓日付の表示を整形する。
+                                    $scope.lineUserList[userIdx]['updated_at'] = new Date($scope.lineUserList[userIdx]['updated_date']);
+                                }
+                                else{
+                                    //↓nullで定義する。
+                                    $scope.lineUserList[userIdx][$scope.addList[addIdx]["category"]] = null;
+                                }
                             }
-                            else if($scope.addList[addIdx]["category"] === "updated_at"){
-                                //↓日付の表示を整形する。
-                                $scope.lineUserList[userIdx]['updated_at'] = new Date($scope.lineUserList[userIdx]['updated_date']);
-                            }
-                            else{
-                                //↓nullで定義する。
-                                $scope.lineUserList[userIdx][$scope.addList[addIdx]["category"]] = null;
-                            }
+                            $scope.lineUserList[userIdx]["isArt"] = false;
                         }
-                        $scope.lineUserList[userIdx]["isArt"] = false;
-                    }
-                    
-                    $scope.numOfTag = Object.keys($scope.userTag).length;
+                        
+                        $scope.numOfTag = Object.keys($scope.userTag).length;
 
-                    //↓タグを持つユーザーだけを抽出する
-                    //$scope.lineHasTagUserList = $filter("filter")($scope.lineUserList, {
-                        //user_tag: ""
-                    //});
-                    //↓ユーザー1人1人にソート項目の要素を追加する。
-                    //↓new Dateしたobjectを用いないとソートできない。
-                    for(userIdx in $scope.lineUserList){
-                        //↓加えるソート項目の数だけループを回し、ソート項目の中にあるタグであるかどうか判定する。
-                        for(addIdx in $scope.addList){
-                            //↓タグリストの中からタグの数だけループを回し、ユーザーの持つタグIDと一致するIDを持つタグを探す。
-                            for(var tagIdx in $scope.userTag){
-                                //↓userTagのcategoryが空のは、ループの次に進む。
-                                if(!$scope.userTag[tagIdx]["category"]){
-                                    continue;
-                                }
-                                //↓indexOfを用いる時は必ず、文字列があることを確認してから行う。
-                                //↓ここでは、$scope.userTag[tagIdx]["category"] && がそれにあたる。
-                                //↓addListに含まないcategoryのものは、ユーザーのプロパティに追加しない。
-                                //↓タグのcategoryが現在回しているaddlistのcategoryと異なる場合は、以下の処理を実行しない。
-                                //↓indexOfを用いているのは、categoryがmajor_artまたはmajor_sciであるものを同じものとみなすため。
-                                //↓indexOfを用いれば他のcategoryと区別しなくてよくなるため、majorのときだけ分岐するif文がいらなくなる。
-                                else if($scope.userTag[tagIdx]["category"] && $scope.userTag[tagIdx]["category"].indexOf($scope.addList[addIdx]["category"]) === -1){
-                                    continue;
-                                }
-                                else if($scope.addList[addIdx]["category"] !== "" && $scope.addList[addIdx]["category"].indexOf("univ") === -1){
-                                        //↓categoryがunivまたはuniv_levelでなければselectedをtrueにする。
-                                        $scope.selected[$scope.addList[addIdx]['category']][$scope.userTag[tagIdx]['name']]=true;
-                                }
-                                //↓ユーザーのタグの数だけループを回し、ユーザーの持つ1つ1つのタグIDがどんなタグであるかを判定する。
-                                for(var userTagIdx in $scope.lineUserList[userIdx].user_tag){
-                                    //↓ユーザーの持つタグとタグリストのタグのidが一致するか判定し、一致すればユーザーのそれに応じたカテゴリーのプロパティに値を代入する。
-                                    if($scope.lineUserList[userIdx].user_tag[userTagIdx] == $scope.userTag[tagIdx].id){
-                                        if($scope.userTag[tagIdx].name !== ""){
-                                            if($scope.addList[addIdx]["category"] === "preference" || $scope.addList[addIdx]["category"] === "industry"){
-                                                 $scope.lineUserList[userIdx][$scope.addList[addIdx]["category"]].push($scope.userTag[tagIdx].name);
-                                            }
-                                            else{
-                                                //↓userTagのnameが空でなければ、lineUserListのそれぞれのカテゴリーのプロパティに値を代入する。
-                                                $scope.lineUserList[userIdx][$scope.addList[addIdx]["category"]] = $scope.userTag[tagIdx].name;
-                                            }
-                                            if($scope.userTag[tagIdx].category === "major_art"){
-                                                $scope.lineUserList[userIdx]["isArt"] = true;
-                                            }
-                                            if($scope.userTag[tagIdx].category === "univ"){
-                                                switch ($scope.userTag[tagIdx].id){
-                                                    //↓上から東大、京大、東工大のｉｄ
-                                                    case 24:
-                                                    case 26:
-                                                    case 6:
-                                                        $scope.lineUserList[userIdx].univ_level = 10;
-                                                        break;
-                                                    //↓上から一橋、早稲田、慶応、阪大、東北大、名大、九大、北大、神戸、筑波（下2つ）のｉｄ
-                                                    case 29:
-                                                    case 40:
-                                                    case 3:
-                                                    case 27:
-                                                    case 4:
-                                                    case 25:
-                                                    case 5:
-                                                    case 11:
-                                                    case 28:
-                                                    case 23:
-                                                        $scope.lineUserList[userIdx].univ_level = 9;
-                                                        break;
-                                                    //↓上から横国、上智、理科大、工学院、電通、明大、青学、立教大学、中央大学、法政大学（下2つ）のｉｄ
-                                                    case 126:
-                                                    case 30:
-                                                    case 9:
-                                                    case 103:
-                                                    case 37:
-                                                    case 110:
-                                                    case 35:
-                                                    case 122:
-                                                    case 31:
-                                                    case 39:
-                                                    case 125:
-                                                        $scope.lineUserList[userIdx].univ_level = 8;
-                                                        break;
-                                                    //↓上から関西大学、立命館大学のｉｄ
-                                                    case 119:
-                                                    case 177:
-                                                        $scope.lineUserList[userIdx].univ_level = 7;
-                                                        break;
-                                                    //↓上から日大、東洋大のｉｄ
-                                                    case 129:
-                                                    case 179:
-                                                        $scope.lineUserList[userIdx].univ_level = 6;
-                                                        break;
-                                                    default:
-                                                        $scope.lineUserList[userIdx].univ_level = 0;
-                                                        break;
+                        //↓タグを持つユーザーだけを抽出する
+                        //$scope.lineHasTagUserList = $filter("filter")($scope.lineUserList, {
+                            //user_tag: ""
+                        //});
+                        //↓ユーザー1人1人にソート項目の要素を追加する。
+                        //↓new Dateしたobjectを用いないとソートできない。
+                        for(userIdx in $scope.lineUserList){
+                            //↓加えるソート項目の数だけループを回し、ソート項目の中にあるタグであるかどうか判定する。
+                            for(addIdx in $scope.addList){
+                                //↓タグリストの中からタグの数だけループを回し、ユーザーの持つタグIDと一致するIDを持つタグを探す。
+                                for(var tagIdx in $scope.userTag){
+                                    //↓userTagのcategoryが空のは、ループの次に進む。
+                                    if(!$scope.userTag[tagIdx]["category"]){
+                                        continue;
+                                    }
+                                    //↓indexOfを用いる時は必ず、文字列があることを確認してから行う。
+                                    //↓ここでは、$scope.userTag[tagIdx]["category"] && がそれにあたる。
+                                    //↓addListに含まないcategoryのものは、ユーザーのプロパティに追加しない。
+                                    //↓タグのcategoryが現在回しているaddlistのcategoryと異なる場合は、以下の処理を実行しない。
+                                    //↓indexOfを用いているのは、categoryがmajor_artまたはmajor_sciであるものを同じものとみなすため。
+                                    //↓indexOfを用いれば他のcategoryと区別しなくてよくなるため、majorのときだけ分岐するif文がいらなくなる。
+                                    else if($scope.userTag[tagIdx]["category"] && $scope.userTag[tagIdx]["category"].indexOf($scope.addList[addIdx]["category"]) === -1){
+                                        continue;
+                                    }
+                                    else if($scope.addList[addIdx]["category"] !== "" && $scope.addList[addIdx]["category"].indexOf("univ") === -1){
+                                            //↓categoryがunivまたはuniv_levelでなければselectedをtrueにする。
+                                            $scope.selected[$scope.addList[addIdx]['category']][$scope.userTag[tagIdx]['name']]=true;
+                                    }
+                                    //↓ユーザーのタグの数だけループを回し、ユーザーの持つ1つ1つのタグIDがどんなタグであるかを判定する。
+                                    for(var userTagIdx in $scope.lineUserList[userIdx].user_tag){
+                                        //↓ユーザーの持つタグとタグリストのタグのidが一致するか判定し、一致すればユーザーのそれに応じたカテゴリーのプロパティに値を代入する。
+                                        if($scope.lineUserList[userIdx].user_tag[userTagIdx] == $scope.userTag[tagIdx].id){
+                                            if($scope.userTag[tagIdx].name !== ""){
+                                                if($scope.addList[addIdx]["category"] === "preference" || $scope.addList[addIdx]["category"] === "industry"){
+                                                     $scope.lineUserList[userIdx][$scope.addList[addIdx]["category"]].push($scope.userTag[tagIdx].name);
+                                                }
+                                                else{
+                                                    //↓userTagのnameが空でなければ、lineUserListのそれぞれのカテゴリーのプロパティに値を代入する。
+                                                    $scope.lineUserList[userIdx][$scope.addList[addIdx]["category"]] = $scope.userTag[tagIdx].name;
+                                                }
+                                                if($scope.userTag[tagIdx].category === "major_art"){
+                                                    $scope.lineUserList[userIdx]["isArt"] = true;
+                                                }
+                                                if($scope.userTag[tagIdx].category === "univ"){
+                                                    switch ($scope.userTag[tagIdx].id){
+                                                        //↓上から東大、京大、東工大のｉｄ
+                                                        case 24:
+                                                        case 215:
+                                                        case 26:
+                                                        case 217:
+                                                        case 6:
+                                                        case 198:
+                                                            $scope.lineUserList[userIdx].univ_level = 10;
+                                                            break;
+                                                        //↓上から一橋、早稲田、慶応、阪大、東北大、名大、九大、北大、神戸、筑波（下2つ）のｉｄ
+                                                        case 29:
+                                                        case 220:
+                                                        case 40:
+                                                        case 231:
+                                                        case 3:
+                                                        case 195:
+                                                        case 27:
+                                                        case 218:
+                                                        case 4:
+                                                        case 196:
+                                                        case 25:
+                                                        case 216:
+                                                        case 5:
+                                                        case 197:
+                                                        case 11:
+                                                        case 202:
+                                                        case 28:
+                                                        case 219:
+                                                        case 23:
+                                                        case 180:
+                                                        case 214:
+                                                        case 366:
+                                                            $scope.lineUserList[userIdx].univ_level = 9;
+                                                            break;
+                                                        //↓上から横国、上智、理科大、工学院、電通、明大、青学、立教大学、中央大学、法政大学（下2つ）のｉｄ
+                                                        case 126:
+                                                        case 314:
+                                                        case 30:
+                                                        case 221:
+                                                        case 9:
+                                                        case 200:
+                                                        case 103:
+                                                        case 294:
+                                                        case 37:
+                                                        case 228:
+                                                        case 110:
+                                                        case 299:
+                                                        case 35:
+                                                        case 226:
+                                                        case 122:
+                                                        case 310:
+                                                        case 31:
+                                                        case 222:
+                                                        case 39:
+                                                        case 125:
+                                                        case 230:
+                                                        case 313:
+                                                            $scope.lineUserList[userIdx].univ_level = 8;
+                                                            break;
+                                                        //↓上から関西大学、立命館大学のｉｄ
+                                                        case 119:
+                                                        case 307:
+                                                        case 177:
+                                                        case 363:
+                                                            $scope.lineUserList[userIdx].univ_level = 7;
+                                                            break;
+                                                        //↓上から日大、東洋大のｉｄ
+                                                        case 129:
+                                                        case 317:
+                                                        case 179:
+                                                        case 365:
+                                                            $scope.lineUserList[userIdx].univ_level = 6;
+                                                            break;
+                                                        default:
+                                                            $scope.lineUserList[userIdx].univ_level = 0;
+                                                            break;
+                                                    }
                                                 }
                                             }
                                         }
@@ -309,12 +363,14 @@ angular.module('concierAdminApp',[])
                                 }
                             }
                         }
-                    }
-                    //↓上でtrueにしているので、これは必要ない
-                    //for(var category in $scope.selected){
-                        //$scope.onChange(category, true);
-                    //}
-                    $scope.runSearch();
+                        //↓上でtrueにしているので、これは必要ない
+                        //for(var category in $scope.selected){
+                            //$scope.onChange(category, true);
+                        //}
+                        $scope.runSearch();
+                    }).
+                    error(function(data, status, headers, config) {
+                    });
                 }).
                 error(function(data, status, headers, config) {
                 });
@@ -420,7 +476,7 @@ angular.module('concierAdminApp',[])
     };
 
     //↓最後のページに移動する。
-    $scope.lastPage =function() {
+    $scope.lastPage = function() {
         //var pageVol = Math.ceil( numOfPage/10 );
         if($scope.numOfPage>10){
             $scope.pager_start = $scope.numOfPage - 9;
@@ -430,6 +486,20 @@ angular.module('concierAdminApp',[])
         }
         $scope.start =  $scope.len * ($scope.numOfPage - 1);
         $scope.cur_page = $scope.numOfPage;
+    };
+
+
+    $scope.filterTagProp = function(tag) {
+        if (tag.id >= 193){
+            return true;
+        }
+        else{
+            return false;
+        }
+    };
+
+    $scope.overlapCheck = function(tag) {
+
     };
 
     //↓ページのインデックス番号を表示するための配列を作る。
@@ -483,13 +553,6 @@ angular.module('concierAdminApp',[])
 
     //↓タグの追加
     $scope.addNewTag = function(){
-        //↓確認ダイアログ
-        if(window.confirm('追加してよろしいですか？')){
-        }
-        else{
-            return;
-        }
-
         //↓入力されたタグのテキストを受け取る。
         var tagText = $scope.currentTagText[$scope.currentUser.id];
         //↓現在選択中の既存のタグのIDを受け取る。
@@ -580,7 +643,7 @@ angular.module('concierAdminApp',[])
     };
 
     //↓タグの削除を実行し、lineUserlistを更新する。
-    $scope.removeTag = function(){
+    $scope.removeTag = function(category){
         if(window.confirm('削除してよろしいですか？')){
         }
         else{
@@ -589,7 +652,21 @@ angular.module('concierAdminApp',[])
         //↓currentTagToRemove[$scope.currentUser.id]には削除するタグのIDが入る。
         var tagToRemove = parseInt($scope.currentTagToRemove[$scope.currentUser.id]);
         var removeIndex = $scope.currentUser.user_tag.indexOf(tagToRemove);
+
+        var tagNameToRemove = $scope.getTagName($scope.currentTagToRemove[$scope.currentUser.id]);
+        var removeNameIndex = $scope.currentUser[category].indexOf(tagNameToRemove);
+
         $scope.currentUser.user_tag.splice(removeIndex, 1);
+
+        if (category === "univ") {
+            $scope.currentUser[category] = "";
+        }
+        else if (category === "preference" || category === "industry") {
+            $scope.currentUser[category].splice(removeNameIndex, 1);
+        }
+        else {
+            $scope.currentUser[category] = "";
+        }
 
         $scope.currnentIndex = -1;
         var url = LINE_API_URL+"/user/"+$scope.currentUser.id;
