@@ -2,6 +2,7 @@
 
 var LINE_API_URL = 'http://ec2-52-36-83-202.us-west-2.compute.amazonaws.com:9000/api';
 
+
 angular.module('concierAdminApp',[])
 /*
     .directive('onInitCheck', ['$timeout', function ($timeout) {
@@ -75,6 +76,9 @@ angular.module('concierAdminApp',[])
 
      //↓データ取得場所指定
      $scope.selectedProductId = 1;
+
+     //↓削除予定リスト
+     $scope.preRemoveTag = {};
 
      //↓データ格納用
     $scope.lineUserList = [];
@@ -552,12 +556,52 @@ angular.module('concierAdminApp',[])
     };
 
     //↓タグの追加
-    $scope.addNewTag = function(){
+    $scope.addNewTag = function(category, ev){
         //↓入力されたタグのテキストを受け取る。
         var tagText = $scope.currentTagText[$scope.currentUser.id];
         //↓現在選択中の既存のタグのIDを受け取る。
         var selectedTag = parseInt($scope.currentSelectedTag[$scope.currentUser.id]);
+        var addTagName = $scope.getTagName($scope.currentSelectedTag[$scope.currentUser.id]);
+        var addTag = angular.element(ev.target);
 
+        if (category != "preference" && category != "industry") {
+            if ($scope.currentUser[category] != "" && $scope.currentUser[category] != null){
+                var isFilled = true;
+                for(var tagName in $scope.preRemoveTag[$scope.currentUser.id]){
+                    //↓削除予定リストにあるタグのカテゴリーの中に今追加しようとしているタグのカテゴリーがあるかどうか
+                    if(tagName == category && $scope.preRemoveTag[$scope.currentUser.id][category].length > 0 && $scope.preRemoveTag[$scope.currentUser.id][category] != undefined){
+                        $scope.preRemoveTag[$scope.currentUser.id][category] = [];
+                        $(addTag).parents('.tag-field').find('.tag-value .tag-wrapper').show();
+                        isFilled = false;
+                    }
+                }
+/*
+                for(var userId in $scope.preRemoveTag){
+                    //↓タグ削除を実行したことのあるユーザーかどうか
+                    if($scope.currentUser.id == userId){
+                        for(var tagName in $scope.preRemoveTag[userId]){
+                            //↓削除予定リストにあるタグのカテゴリーの中に今追加しようとしているタグのカテゴリーがあるかどうか
+                            if(category == tagName){
+                                isFilled = false;
+                            }
+                        }
+                    }
+                }
+*/
+                if(isFilled){
+                    window.confirm('すでにつけられているタグを削除してください');
+                    return;
+                }
+            }
+        }
+
+        if($scope.currentUser.user_tag != null && $scope.currentUser.user_tag != undefined){
+            if($scope.currentUser.user_tag.indexOf(selectedTag) != -1){
+                return;
+            }
+        }
+
+        $(addTag).parents('.tag-field').find('.tag-value .loading').html("<i class='fa fa-spinner fa-pulse fa-2x fa-fw'></i>");
         //↓追加するタグが空または定義されていなければ実行する。
         if(tagText != "" && tagText != undefined){
             //↓入力欄のテキストを初期化する。
@@ -575,9 +619,98 @@ angular.module('concierAdminApp',[])
                 if($scope.currentUser.user_tag.indexOf(tagId)!=-1){
                     return;
                 //↓tagIdと同じIDをユーザーがもっていなければ、タグのIDを追加する。
-                }else{
-                    $scope.currentUser.user_tag.push(tagId);
                 }
+                else{
+                    $scope.currentUser.user_tag.push(tagId);
+                    if (category === "univ") {
+                        $scope.currentUser.univ = addTagName;
+                        switch (selectedTag){
+                            //↓上から東大、京大、東工大のｉｄ
+                            case 24:
+                            case 215:
+                            case 26:
+                            case 217:
+                            case 6:
+                            case 198:
+                                $scope.currentUser.univ_level = 10;
+                                break;
+                            //↓上から一橋、早稲田、慶応、阪大、東北大、名大、九大、北大、神戸、筑波（下2つ）のｉｄ
+                            case 29:
+                            case 220:
+                            case 40:
+                            case 231:
+                            case 3:
+                            case 195:
+                            case 27:
+                            case 218:
+                            case 4:
+                            case 196:
+                            case 25:
+                            case 216:
+                            case 5:
+                            case 197:
+                            case 11:
+                            case 202:
+                            case 28:
+                            case 219:
+                            case 23:
+                            case 180:
+                            case 214:
+                            case 366:
+                                $scope.currentUser.univ_level = 9;
+                                break;
+                            //↓上から横国、上智、理科大、工学院、電通、明大、青学、立教大学、中央大学、法政大学（下2つ）のｉｄ
+                            case 126:
+                            case 314:
+                            case 30:
+                            case 221:
+                            case 9:
+                            case 200:
+                            case 103:
+                            case 294:
+                            case 37:
+                            case 228:
+                            case 110:
+                            case 299:
+                            case 35:
+                            case 226:
+                            case 122:
+                            case 310:
+                            case 31:
+                            case 222:
+                            case 39:
+                            case 125:
+                            case 230:
+                            case 313:
+                                $scope.currentUser.univ_level = 8;
+                                break;
+                            //↓上から関西大学、立命館大学のｉｄ
+                            case 119:
+                            case 307:
+                            case 177:
+                            case 363:
+                                $scope.currentUser.univ_level = 7;
+                                break;
+                            //↓上から日大、東洋大のｉｄ
+                            case 129:
+                            case 317:
+                            case 179:
+                            case 365:
+                                $scope.currentUser.univ_level = 6;
+                                break;
+                            default:
+                                $scope.currentUser.univ_level = 0;
+                                break;
+                        }
+                    }
+                    else if (category === "preference" || category === "industry") {
+                        $scope.currentUser[category].push(addTagName);
+                    }
+                    else {
+                        $scope.currentUser[category] = addTagName;
+                    }
+                }
+
                 var url = LINE_API_URL+"/user/"+$scope.currentUser.id;
                 $http({
                     url: url,
@@ -586,12 +719,14 @@ angular.module('concierAdminApp',[])
                     data: {"user_tag": $scope.currentUser.user_tag}
                 }).
                 success(function(data, status, headers, config) {
-                    //$scope.getLineUserList(); 
+                    //$scope.getLineUserList();
+                    $(addTag).parents('.tag-field').find('.tag-value .loading').html("");
                 }).
                 error(function(data, status, headers, config) {
                 });  
 
-            }else{
+            }
+            else{
                 $http({
                     url: LINE_API_URL+"/user_tag",
                     method: "POST",
@@ -601,7 +736,8 @@ angular.module('concierAdminApp',[])
                 success(function(data, status, headers, config) {
                     if($scope.currentUser.user_tag.indexOf(data.id)!=-1){
                         return;
-                    }else{
+                    }
+                    else{
                         $scope.currentUser.user_tag.push(data.id);
                     }
                     var url = LINE_API_URL+"/user/"+$scope.currentUser.id;
@@ -612,7 +748,8 @@ angular.module('concierAdminApp',[])
                         data: {"product":$scope.selectedProductId , "user_tag": $scope.currentUser.user_tag}
                     }).
                     success(function(data, status, headers, config) {
-                        //$scope.getLineUserList(); 
+                        //$scope.getLineUserList();
+                        $(addTag).parents('.tag-field').find('.tag-value .loading').html("");
                     }).
                     error(function(data, status, headers, config) {
                     });  
@@ -621,11 +758,100 @@ angular.module('concierAdminApp',[])
                 });
             }
         //↓選択されたタグが空または定義されていなければ何もしない。
-        }else if(selectedTag != "" && selectedTag != undefined){
+        }
+        else if(selectedTag != "" && selectedTag != undefined){
             if($scope.currentUser.user_tag.indexOf(selectedTag)!=-1){
                 return;
-            }else{
+            }
+            else{
                 $scope.currentUser.user_tag.push(selectedTag);
+                if (category === "univ") {
+                    $scope.currentUser.univ = addTagName;
+                    switch (selectedTag){
+                        //↓上から東大、京大、東工大のｉｄ
+                        case 24:
+                        case 215:
+                        case 26:
+                        case 217:
+                        case 6:
+                        case 198:
+                            $scope.currentUser.univ_level = 10;
+                            break;
+                        //↓上から一橋、早稲田、慶応、阪大、東北大、名大、九大、北大、神戸、筑波（下2つ）のｉｄ
+                        case 29:
+                        case 220:
+                        case 40:
+                        case 231:
+                        case 3:
+                        case 195:
+                        case 27:
+                        case 218:
+                        case 4:
+                        case 196:
+                        case 25:
+                        case 216:
+                        case 5:
+                        case 197:
+                        case 11:
+                        case 202:
+                        case 28:
+                        case 219:
+                        case 23:
+                        case 180:
+                        case 214:
+                        case 366:
+                            $scope.currentUser.univ_level = 9;
+                            break;
+                        //↓上から横国、上智、理科大、工学院、電通、明大、青学、立教大学、中央大学、法政大学（下2つ）のｉｄ
+                        case 126:
+                        case 314:
+                        case 30:
+                        case 221:
+                        case 9:
+                        case 200:
+                        case 103:
+                        case 294:
+                        case 37:
+                        case 228:
+                        case 110:
+                        case 299:
+                        case 35:
+                        case 226:
+                        case 122:
+                        case 310:
+                        case 31:
+                        case 222:
+                        case 39:
+                        case 125:
+                        case 230:
+                        case 313:
+                            $scope.currentUser.univ_level = 8;
+                            break;
+                        //↓上から関西大学、立命館大学のｉｄ
+                        case 119:
+                        case 307:
+                        case 177:
+                        case 363:
+                            $scope.currentUser.univ_level = 7;
+                            break;
+                        //↓上から日大、東洋大のｉｄ
+                        case 129:
+                        case 317:
+                        case 179:
+                        case 365:
+                            $scope.currentUser.univ_level = 6;
+                            break;
+                        default:
+                            $scope.currentUser.univ_level = 0;
+                            break;
+                    }
+                }
+                else if (category === "preference" || category === "industry") {
+                    $scope.currentUser[category].push(addTagName);
+                }
+                else {
+                    $scope.currentUser[category] = addTagName;
+                }
             }
             var url = LINE_API_URL+"/user/"+$scope.currentUser.id;
             $http({
@@ -635,7 +861,8 @@ angular.module('concierAdminApp',[])
                 data: {"product":$scope.selectedProductId , "user_tag": $scope.currentUser.user_tag }
             }).
             success(function(data, status, headers, config) {
-                //$scope.getLineUserList(); 
+                //$scope.getLineUserList();
+                $(addTag).parents('.tag-field').find('.tag-value .loading').html("");
             }).
             error(function(data, status, headers, config) {
             });
@@ -643,7 +870,7 @@ angular.module('concierAdminApp',[])
     };
 
     //↓タグの削除を実行し、lineUserlistを更新する。
-    $scope.removeTag = function(category){
+    $scope.removeTag = function(category, ev){
         if(window.confirm('削除してよろしいですか？')){
         }
         else{
@@ -656,16 +883,27 @@ angular.module('concierAdminApp',[])
         var tagNameToRemove = $scope.getTagName($scope.currentTagToRemove[$scope.currentUser.id]);
         var removeNameIndex = $scope.currentUser[category].indexOf(tagNameToRemove);
 
+        var removeTag = angular.element(ev.target);
+        $(removeTag).parents('.tag-field').find('.tag-value .loading').html("<i class='fa fa-spinner fa-pulse fa-2x fa-fw'></i>");
+
         $scope.currentUser.user_tag.splice(removeIndex, 1);
 
         if (category === "univ") {
-            $scope.currentUser[category] = "";
+            if (tagNameToRemove == $scope.currentUser[category]){
+                //$(removeTag).parents('.tag-field').find('.tag-value .tag-wrapper').css("background-color", "transparent");
+                $(removeTag).parents('.tag-field').find('.tag-value .tag-wrapper').hide();
+            }
         }
         else if (category === "preference" || category === "industry") {
-            $scope.currentUser[category].splice(removeNameIndex, 1);
+            if ($scope.currentUser[category].indexOf(tagNameToRemove) != -1){
+                //$(removeTag).parents('.tag-field').find('.tag-value .tag-wrapper' + "." + tagNameToRemove + '').css("background-color", "transparent");
+                $(removeTag).parents('.tag-field').find('.tag-value .' + tagNameToRemove + '').hide();
+            }
         }
         else {
-            $scope.currentUser[category] = "";
+            if (tagNameToRemove == $scope.currentUser[category]){
+                $(removeTag).parents('.tag-field').find('.tag-value .tag-wrapper').css("display", "none");
+            }
         }
 
         $scope.currnentIndex = -1;
@@ -677,7 +915,14 @@ angular.module('concierAdminApp',[])
             data: {"product":$scope.selectedProductId , "user_tag": $scope.currentUser.user_tag }
         }).
         success(function(data, status, headers, config) {
-            $scope.getLineUserList();
+            //$scope.getLineUserList();
+            if($scope.preRemoveTag[$scope.currentUser.id] == null || $scope.preRemoveTag[$scope.currentUser.id] == undefined || $scope.preRemoveTag[$scope.currentUser.id][category] == null || $scope.preRemoveTag[$scope.currentUser.id][category] == undefined){
+                $scope.preRemoveTag[$scope.currentUser.id] = {};
+                $scope.preRemoveTag[$scope.currentUser.id][category] = [];
+                $scope.preRemoveTag[$scope.currentUser.id][category].push(tagToRemove);
+            }
+            $scope.preRemoveTag[$scope.currentUser.id][category].push(tagToRemove);
+            $(removeTag).parents('.tag-field').find('.tag-value .loading').html("");
         }).
         error(function(data, status, headers, config) {
         });

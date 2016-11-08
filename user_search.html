@@ -396,9 +396,12 @@
                          <!--currentUserとは現在選択中のユーザー。どれか他のユーザーを選択中のとき、他のユーザーのタグ追加画面は表示しないようにする。-->
                         <div ng-repeat="ic in sortList | filter: {category : '!preference'} | filter: {category : '!industry'} ">
                             <!--ソート項目ごとにループし、ソート項目の順番とユーザーのタグの順番が同じになるようにする。-->
-                            <div ng-class=" (ic.category == 'major') ? 'col-sm-2':'col-sm-1' ">
-                                <span ng-if="item[ic.category]!=null" class="tag-wrapper">
-                                    <a href="javascript:" ng-click="searchByTag(sortTag)">{{sortTag = getSortTag(ic.category, item)}}</a>
+                            <div ng-class=" (ic.category == 'major') ? 'col-sm-2':'col-sm-1' " class="tag-field">
+                                <span class="tag-value">
+                                    <span class="tag-wrapper" ng-if="item[ic.category]!=null">
+                                        <a href="javascript:" ng-click="searchByTag(sortTag)">{{sortTag = getSortTag(ic.category, item)}}</a>
+                                    </span>
+                                    <span class="loading"></span>
                                 </span>
                                 <div class="edit-wrapper">
 
@@ -414,14 +417,14 @@
                                             <div>
                                                 <select name="selectedTag" ng-model="currentSelectedTag[currentUser.id]">
                                                     <option selected="selected" value="" disabled>---タグを選択---</option>
-                                                    <option ng-repeat="tag in userTag|filter: { category:ic.category }" value="{{tag.id}}">{{tag.name}} / {{tag.categoryText}} </option>
+                                                    <option ng-repeat="tag in userTag|filter: { category:ic.category } |filter: filterTagProp" value="{{tag.id}}">{{tag.name}} / {{tag.categoryText}} </option>
                                                 </select>
                                             </div>
                                             <div class="edit-add-padding">
                                                 <input type="text" class="tag-text" ng-model="currentTagText[currentUser.id]" placeholder="新規タグ">
                                             </div>
                                             <div>
-                                                <input type="submit" ng-click="addNewTag()"  value="追加" class="btn btn-primary btn-xs"/>
+                                                <input type="submit" ng-click="addNewTag(ic.category, $event)"  value="追加" class="btn btn-primary btn-xs"/>
                                             </div>
                                         </span>
                                         <div class="edit-padding-bottom"></div>
@@ -442,7 +445,7 @@
                                                 </select>
                                             </div>
                                             <div>
-                                                <input type="submit" ng-click="removeTag(ic.category)" value="削除" class="btn btn-border btn-xs text-primary"/>
+                                                <input type="submit" ng-click="removeTag(ic.category, $event)" value="削除" class="btn btn-border btn-xs text-primary"/>
                                             </div>
                                         </span>
                                         <div class="edit-padding-bottom"></div>
@@ -453,10 +456,14 @@
                             </div>
                         </div>
 
-                        <div  class="col-sm-1">
-                            <span ng-repeat="preferenceTag in item['preference']">
-                                <a href="javascript:" ng-click="searchByTag(preferenceTag)" class="tag-wrapper">{{preferenceTag}}</a>
+                        <div  class="col-sm-1 tag-field">
+                            <span class="tag-value">
+                                <span ng-repeat="preferenceTag in item['preference']" class="tag-wrapper" ng-class="preferenceTag">
+                                    <a href="javascript:" ng-click="searchByTag(preferenceTag)">{{preferenceTag}}</a>
+                                </span>
+                                <span class="loading"></span>
                             </span>
+
                             <div class="edit-wrapper">
 
                                 <!--↓追加用-->
@@ -470,14 +477,14 @@
                                         <div>
                                             <select name="selectedTag" ng-model="currentSelectedTag[currentUser.id]">
                                                 <option selected="selected" value="" disabled>---タグを選択---</option>
-                                                <option ng-repeat="tag in userTag|filter: { category:'preference' }" value="{{tag.id}}">{{tag.name}} / {{tag.categoryText}} </option>
+                                                <option ng-repeat="tag in userTag|filter: { category:'preference' } |filter: filterTagProp" value="{{tag.id}}">{{tag.name}} / {{tag.categoryText}} </option>
                                             </select>
                                         </div>
                                         <div class="edit-add-padding">
                                             <input type="text" class="tag-text" ng-model="currentTagText[currentUser.id]" placeholder="新規タグ">
                                         </div>
                                         <div>
-                                            <input type="submit" ng-click="addNewTag()" value="追加" class="btn btn-primary btn-xs"/>
+                                            <input type="submit" ng-click="addNewTag('preference', $event)" value="追加" class="btn btn-primary btn-xs"/>
                                         </div>
                                     </span>
                                     <div class="edit-padding-bottom"></div>
@@ -498,7 +505,7 @@
                                             </select>
                                         </div>
                                         <div>
-                                            <input type="submit" ng-click="removeTag('preference')" value="削除" class="btn btn-border btn-xs text-primary"/>
+                                            <input type="submit"  ng-click="removeTag('preference', $event)" value="削除" class="btn btn-border btn-xs text-primary"/>
                                         </div>
                                     </span>
                                     <div class="edit-padding-bottom"></div>
@@ -507,12 +514,13 @@
                             </div>
                         </div>
 
-                        <div class="col-sm-2">
-                            
-                            <span ng-repeat="industryTag in item['industry']" class="tag-wrapper">
-                                <a href="javascript:" ng-click="searchByTag(industryTag)">{{industryTag}}</a>
+                        <div class="col-sm-2 tag-field">
+                            <span class="tag-value">
+                                <span ng-repeat="industryTag in item['industry']" class="tag-wrapper" ng-class="industryTag">
+                                    <a href="javascript:" ng-click="searchByTag(industryTag)">{{industryTag}}</a>
+                                </span>
+                                <span class="loading"></span>
                             </span>
-
                             <div class="edit-wrapper">
 
                                 <!--↓追加用-->
@@ -526,14 +534,14 @@
                                     <div>
                                         <select name="selectedTag" ng-model="currentSelectedTag[currentUser.id]">
                                             <option selected="selected" value="" disabled>---タグを選択---</option>
-                                            <option ng-repeat="tag in userTag|filter: { category:'industry' }" value="{{tag.id}}">{{tag.name}} / {{tag.categoryText}} </option>
+                                            <option ng-repeat="tag in userTag|filter: { category:'industry' } |filter: filterTagProp" value="{{tag.id}}">{{tag.name}} / {{tag.categoryText}} </option>
                                         </select>
                                     </div>
                                     <div class="edit-add-padding">
                                         <input type="text" class="tag-text" ng-model="currentTagText[currentUser.id]" placeholder="新規タグ">
                                     </div>
                                     <div>
-                                        <input type="submit" ng-click="addNewTag()" value="追加" class="btn btn-primary btn-xs"/>
+                                        <input type="submit" ng-click="addNewTag('industry', $event)" value="追加" class="btn btn-primary btn-xs"/>
                                     </div>
                                     </span>
                                     <div class="edit-padding-bottom"></div>
@@ -554,7 +562,7 @@
                                             </select>
                                         </div>
                                         <div>
-                                            <input type="submit" ng-click="removeTag('industry')" value="削除" class="btn btn-border btn-xs text-primary"/>
+                                            <input type="submit" ng-click="removeTag('industry', $event)" value="削除" class="btn btn-border btn-xs text-primary"/>
                                         </div>
                                     </span>
                                     <div class="edit-padding-bottom"></div>
