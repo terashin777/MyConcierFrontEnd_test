@@ -37,6 +37,18 @@ angular.module('concierAdminApp',[])
         };
     })
 
+    .filter('removeTagFilter', function() {
+        return function(tag, removeData){
+            if(removeData[1][removeData[0].id] === null || removeData[1][removeData[0].id] === undefined || removeData[1][removeData[0].id][tag.category] === null || removeData[1][removeData[0].id][tag.category] === undefined){
+            }
+            else{
+                if (removeData[1][removeData[0].id][tag.category].indexOf(tag.id) == -1){
+                    $('#tag-user-' + tag.id + '-' + getSortTag(tag.category, removeData[0])).hide();
+                }
+            }
+        };
+    })
+
 
 /*
     //↓ページの読み込み完了時に処理を実行するといったやり方ができないためカスタムのディレクティブを用いる。
@@ -570,7 +582,6 @@ angular.module('concierAdminApp',[])
                 for(var tagName in $scope.preRemoveTag[$scope.currentUser.id]){
                     //↓削除予定リストにあるタグのカテゴリーの中に今追加しようとしているタグのカテゴリーがあるかどうか
                     if(tagName == category && $scope.preRemoveTag[$scope.currentUser.id][category].length > 0 && $scope.preRemoveTag[$scope.currentUser.id][category] != undefined){
-                        $scope.preRemoveTag[$scope.currentUser.id][category] = [];
                         $(addTag).parents('.tag-field').find('.tag-value .tag-wrapper').show();
                         isFilled = false;
                     }
@@ -617,7 +628,6 @@ angular.module('concierAdminApp',[])
             if(tagId){
                 //↓tagIdと同じIDをユーザーがすでに持っていれば何もしない。
                 if($scope.currentUser.user_tag.indexOf(tagId)!=-1){
-                    return;
                 //↓tagIdと同じIDをユーザーがもっていなければ、タグのIDを追加する。
                 }
                 else{
@@ -721,6 +731,7 @@ angular.module('concierAdminApp',[])
                 success(function(data, status, headers, config) {
                     //$scope.getLineUserList();
                     $(addTag).parents('.tag-field').find('.tag-value .loading').html("");
+                    $(addTag).parents('.tag-field').find('.tag-value .tag-wrapper').show();
                 }).
                 error(function(data, status, headers, config) {
                 });  
@@ -1349,7 +1360,7 @@ angular.module('concierAdminApp',[])
     };
 
     $scope.industryOrder = function(industry) {
-        var order = { '機械・重工': 0, '自動車' : 1, '自動車部品': 2, '鉄道': 3, '輸送用機器': 4, '電機機器': 5, 'テレビ': 6, '精密機器': 7, '住宅設備機器': 8, '医療機器': 9, 'その他メーカー': 10, '通信サービス': 11, 'SIer': 12, 'ゲーム': 13, '建築': 14, '化学': 15, '医薬品': 16, '化粧品': 17, '電力・ガス': 18, '鉄鋼': 19, '素材':20 };
+        var order = { '自動車' : 0, '自動車部品': 1, '鉄道': 2, '海運・空運': 3, '輸送用機器': 4, '機械・重工': 5, '電機機器': 6, 'テレビ': 7, '住宅設備機器': 8, '医療機器': 9, '精密機器': 10, 'その他メーカー': 11, '通信サービス': 12, 'SIer': 13, 'ゲーム': 14, '建築': 15, '化学': 16, '医薬品': 17, '化粧品': 18, '石油': 19, '電力・ガス': 20, '鉄鋼': 21, '素材': 22 };
         return order[industry.name];
     };
 
