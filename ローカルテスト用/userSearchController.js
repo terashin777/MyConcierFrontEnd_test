@@ -893,7 +893,7 @@ angular.module('concierAdminApp',[])
             }
         }
         $removeTag.parents('.tag-field').find('.tag-value .loading').html("");
-    }
+    };
 
     //↓タグの名前をタグのIDから取得する。
     $scope.getTagName = function(tagId){

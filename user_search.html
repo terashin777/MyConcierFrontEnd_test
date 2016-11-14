@@ -74,7 +74,7 @@
                                 </label>
                             </div>
                             <div class="col-sm-9">
-                                <label ng-repeat="tag in filteredUserTag = (userTag|filter: { category:'grade' }) | filter: filterTagProp">
+                                <label ng-repeat="tag in filteredUserTag = (userTag|filter: { category:'grade' }) | filter: filterTagProp | orderBy : gradeOrder ">
                                     <input type="checkbox" ng-model="selected.grade[tag.name]" ng-checked="allFrags.grade" name="grade_search">
                                     <!-- <input type="checkbox" ng-model="user_univ" value="{{tag.name}}" name="univ_search"> -->
                                         {{tag.name}}
@@ -361,7 +361,7 @@
                             </div>
                         </div>
                          <!--currentUserとは現在選択中のユーザー。どれか他のユーザーを選択中のとき、他のユーザーのタグ追加画面は表示しないようにする。-->
-                        <div ng-repeat="ic in sortList | filter: {category : '!preference'} | filter: {category : '!industry'} ">
+                        <div ng-repeat="ic in sortList | filter: {category : '!preference'} | filter: {category : '!industry'} track by $index ">
                             <!--ソート項目ごとにループし、ソート項目の順番とユーザーのタグの順番が同じになるようにする。-->
                             <div ng-class=" (ic.category == 'major') ? 'col-sm-2':'col-sm-1' " class="tag-field">
                                 <span class="tag-value">
@@ -384,7 +384,9 @@
                                             <div>
                                                 <select name="selectedTag" ng-model="currentSelectedTag[currentUser.id]">
                                                     <option selected="selected" value="" disabled>---タグを選択---</option>
-                                                    <option ng-repeat="tag in userTag|filter: { category:ic.category } |filter: filterTagProp" value="{{tag.id}}">{{tag.name}} / {{tag.categoryText}} </option>
+                                                    <option ng-if="ic.category === 'univ' " ng-repeat="tag in userTag|filter: { category:ic.category }" value="{{tag.id}}">{{tag.name}} / {{tag.categoryText}} </option>
+                                                    <option ng-if="ic.category === 'grade' " ng-repeat="tag in userTag|filter: { category:ic.category } |filter: filterTagProp| orderBy : gradeOrder" value="{{tag.id}}">{{tag.name}} / {{tag.categoryText}} </option>
+                                                    <option ng-if="ic.category === 'major' " ng-repeat="tag in userTag|filter: { category:ic.category } |filter: filterTagProp| orderBy : majorOrder" value="{{tag.id}}">{{tag.name}} / {{tag.categoryText}} </option>
                                                 </select>
                                             </div>
                                             <div class="edit-add-padding">
@@ -425,7 +427,7 @@
 
                         <div  class="col-sm-1 tag-field">
                             <span class="tag-value">
-                                <span ng-show="isArrayTagShow('preference', tag, item)" ng-repeat="tag in item['preference']" class="tag-wrapper" ng-class="preferenceTag">
+                                <span ng-show="isArrayTagShow('preference', tag, item)" ng-repeat="tag in item['preference'] track by $index" class="tag-wrapper" ng-class="preferenceTag">
                                     <a href="javascript:" ng-click="searchByTag(tag)">{{tag}}</a>
                                 </span>
                                 <span class="loading"></span>
@@ -483,7 +485,7 @@
 
                         <div class="col-sm-2 tag-field">
                             <span class="tag-value">
-                                <span ng-show="isArrayTagShow('industry', tag, item)" ng-repeat="tag in item['industry']" class="tag-wrapper" ng-class="industryTag">
+                                <span ng-show="isArrayTagShow('industry', tag, item)" ng-repeat="tag in item['industry'] track by $index" class="tag-wrapper" ng-class="industryTag">
                                     <a href="javascript:" ng-click="searchByTag(tag)">{{tag}}</a>
                                 </span>
                                 <span class="loading"></span>
@@ -501,7 +503,7 @@
                                     <div>
                                         <select name="selectedTag" ng-model="currentSelectedTag[currentUser.id]">
                                             <option selected="selected" value="" disabled>---タグを選択---</option>
-                                            <option ng-repeat="tag in userTag|filter: { category:'industry' } |filter: filterTagProp" value="{{tag.id}}">{{tag.name}} / {{tag.categoryText}} </option>
+                                            <option ng-repeat="tag in userTag|filter: { category:'industry' } |filter: filterTagProp | orderBy : industryOrder" value="{{tag.id}}">{{tag.name}} / {{tag.categoryText}} </option>
                                         </select>
                                     </div>
                                     <div class="edit-add-padding">
@@ -525,7 +527,7 @@
                                         <div class="edit-remove-padding">
                                             <select name="selectedTagToRemove" ng-model="currentTagToRemove[currentUser.id]">
                                                 <option selected="selected" value="" disabled>---タグを選択---</option>
-                                                <option ng-show="isTagShow('industry', tag)" ng-repeat="tag in item.user_tag" value="{{tag}}">{{getTagName(tag)}}</option>
+                                                <option ng-show="isTagShow('industry', tag)" ng-repeat="tag in item.user_tag | orderBy : industryOrder" value="{{tag}}">{{getTagName(tag)}}</option>
                                             </select>
                                         </div>
                                         <div>
