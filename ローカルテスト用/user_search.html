@@ -483,8 +483,8 @@
 
                         <div class="col-sm-2 tag-field">
                             <span class="tag-value">
-                                <span ng-show="isArrayTagShow('industry', tag, item)" ng-repeat="tag in item['industry']" class="tag-wrapper" ng-class="industryTag">
-                                    <a href="javascript:" ng-click="searchByTag(tag)">{{tag}}</a>
+                                <span ng-repeat="industryTag in item['industry'] track by $index" class="tag-wrapper" ng-class="industryTag">
+                                    <a href="javascript:" ng-click="searchByTag(industryTag)">{{industryTag}}</a>
                                 </span>
                                 <span class="loading"></span>
                             </span>
