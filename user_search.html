@@ -384,7 +384,7 @@
                                             <div>
                                                 <select name="selectedTag" ng-model="currentSelectedTag[currentUser.id]">
                                                     <option selected="selected" value="" disabled>---タグを選択---</option>
-                                                    <option ng-if="ic.category === 'univ' " ng-repeat="tag in userTag|filter: { category:ic.category }" value="{{tag.id}}">{{tag.name}} / {{tag.categoryText}} </option>
+                                                    <option ng-if="ic.category === 'univ' " ng-repeat="tag in userTag|filter: { category:ic.category }| orderBy : univOrder" value="{{tag.id}}">{{tag.name}} / {{tag.categoryText}} </option>
                                                     <option ng-if="ic.category === 'grade' " ng-repeat="tag in userTag|filter: { category:ic.category } |filter: filterTagProp| orderBy : gradeOrder" value="{{tag.id}}">{{tag.name}} / {{tag.categoryText}} </option>
                                                     <option ng-if="ic.category === 'major' " ng-repeat="tag in userTag|filter: { category:ic.category } |filter: filterTagProp| orderBy : majorOrder" value="{{tag.id}}">{{tag.name}} / {{tag.categoryText}} </option>
                                                 </select>

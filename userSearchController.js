@@ -620,24 +620,6 @@ angular.module('concierAdminApp',[])
                 }
                 else{
                     $scope.OverRapCheck(addTagName, category, selectedTag);
-                    /*
-                    var addId = $scope.getTagId(addTagName);
-                    var addIndex = $scope.currentUser.user_tag.indexOf(addId);
-                    if(category === "preference" || category === "industry"){
-                        if($scope.currentUser[category].indexOf(addTagName) != -1){
-                            for(var i in $scope.currentUser[category]){
-                                if($scope.currentUser[category][i] == addTagName){
-                                    $scope.currentUser.user_tag.splice(addIndex, 1);
-                                }
-                            }
-                        }
-                    }
-                    else{
-                        if($scope.currentUser[category] == addTagName){
-                            $scope.currentUser.user_tag.splice(addIndex, 1);
-                        }
-                    }
-                    */
                     $scope.currentUser.user_tag.push(tagId);
                 }
                 var url = LINE_API_URL+"/user/"+$scope.currentUser.id;
@@ -729,34 +711,6 @@ angular.module('concierAdminApp',[])
                 }
             }
         }
-        /*
-        if(category === "preference" || category === "industry"){
-            if($scope.currentUser[category].indexOf(addTagName) != -1){
-                for(var i in $scope.userTag){
-                    if($scope.userTag[i].name == addTagName){
-                        addId = $scope.userTag[i].id;
-                        addIndex = $scope.currentUser.user_tag.indexOf(addId);
-                        if(addIndex != -1){
-                            $scope.currentUser.user_tag.splice(addIndex, 1);
-                        }
-                    }
-                }
-            }
-        }
-        else{
-            if($scope.currentUser[category] == addTagName){
-                for(var j in $scope.userTag){
-                    if($scope.userTag[j].name == addTagName){
-                        addId = $scope.userTag[j].id;
-                        addIndex = $scope.currentUser.user_tag.indexOf(addId);
-                        if(addIndex != -1){
-                            $scope.currentUser.user_tag.splice(addIndex, 1);
-                        }
-                    }
-                }
-            }
-        }
-        */
     };
 
     $scope.runAddTag = function(selectedTag, category, addTagName, $addTag){
@@ -858,19 +812,6 @@ angular.module('concierAdminApp',[])
             }
         }
         else if (category === "preference" || category === "industry") {
-/*
-            if($scope.currentUser[category].indexOf(addTagName) != -1){
-                for(var i in $scope.userTag){
-                    if($scope.userTag[i].name == addTagName){
-                        var removeTagIdx = $scope.currentUser.user_tag.indexOf($scope.userTag[i].id);
-                        if(removeTagIdx != -1){
-                            scope.currentUser.user_tag.splice(removeTagIdx, 1);
-                        }
-                    }
-                }
-            }
-*/
-
             if($scope.currentUser[category].indexOf(addTagName) != -1){
                 for(var i in $scope.currentUser[category]){
                     if($scope.currentUser[category][i] == addTagName){
@@ -905,25 +846,7 @@ angular.module('concierAdminApp',[])
         $removeTag.parents('.tag-field').find('.tag-value .loading').html("<i class='fa fa-spinner fa-pulse fa-2x fa-fw'></i>");
 
         $scope.currentUser.user_tag.splice(removeIndex, 1);
-/*
-        if (category === "univ") {
-            if (tagNameToRemove == $scope.currentUser[category]){
-                //$(removeTag).parents('.tag-field').find('.tag-value .tag-wrapper').css("background-color", "transparent");
-                $(removeTag).parents('.tag-field').find('.tag-value .tag-wrapper').hide();
-            }
-        }
-        else if (category === "preference" || category === "industry") {
-            if ($scope.currentUser[category].indexOf(tagNameToRemove) != -1){
-                //$(removeTag).parents('.tag-field').find('.tag-value .tag-wrapper' + "." + tagNameToRemove + '').css("background-color", "transparent");
-                $(removeTag).parents('.tag-field').find('.tag-value .' + tagNameToRemove + '').hide();
-            }
-        }
-        else {
-            if (tagNameToRemove == $scope.currentUser[category]){
-                $(removeTag).parents('.tag-field').find('.tag-value .tag-wrapper').css("display", "none");
-            }
-        }
-*/
+        
         $scope.currnentIndex = -1;
         var url = LINE_API_URL+"/user/"+$scope.currentUser.id;
         $http({
