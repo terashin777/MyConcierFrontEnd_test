@@ -46,7 +46,7 @@
                                 </label>
                             </div>
                             <div class="col-sm-9">
-                                <label ng-repeat="tag in univGroupList | tagFilter:univGroupList">
+                                <label ng-repeat="tag in univGroupList">
                                     <input type="checkbox" ng-model="selected.univ_level[tag.univ_level]" ng-checked="allFrags.univ_level" name="univ_level_search">
                                     <!-- <input type="checkbox" ng-model="user_univ" value="{{tag.name}}" name="univ_search"> -->
                                         {{tag.group}}
@@ -74,7 +74,7 @@
                                 </label>
                             </div>
                             <div class="col-sm-9">
-                                <label ng-repeat="tag in filteredUserTag = (userTag|filter: { category:'grade' }) | filter: filterTagProp | orderBy : gradeOrder ">
+                                <label ng-repeat="tag in filteredUserTag = (showTag|filter: { category:'grade' }) | orderBy : gradeOrder ">
                                     <input type="checkbox" ng-model="selected.grade[tag.name]" ng-checked="allFrags.grade" name="grade_search">
                                     <!-- <input type="checkbox" ng-model="user_univ" value="{{tag.name}}" name="univ_search"> -->
                                         {{tag.name}}
@@ -104,7 +104,7 @@
                                 </div>
                             </div>
                             <div class="col-sm-9">
-                            <label ng-repeat="tag in userTag|filter: { category:'major_sci' } | tagFilter:userTag | filter: filterTagProp | orderBy : majorOrder ">
+                            <label ng-repeat="tag in showTag|filter: { category:'major_sci' } | orderBy : majorOrder ">
                                 <input type="checkbox" ng-model="selected.major[tag.name]" ng-checked="allFrags.major" name="major_search">
                               <!-- <input type="checkbox" ng-model="user_univ" value="{{tag.name}}" name="univ_search"> -->
                                     {{tag.name}}
@@ -137,7 +137,7 @@
                             </label>
                             </div>
                             <div class="col-sm-9">
-                            <label ng-repeat="tag in userTag|filter: { category:'preference' } | filter: filterTagProp">
+                            <label ng-repeat="tag in showTag|filter: { category:'preference' }">
                               <input type="checkbox" ng-model="selected.preference[tag.name]" ng-checked="allFrags.preference" name="preference_search">
                               <!-- <input type="checkbox" ng-model="user_univ" value="{{tag.name}}" name="univ_search"> -->
                                 {{tag.name}}
@@ -166,12 +166,12 @@
                             </div>
                             <div class="col-sm-9">
                             <!--↓フィルターは適用する順番に気をつける。基本的にはorderByで並び替えをしてから絞り込む。-->
-                            <label ng-repeat="tag in userTag|filter: { category:'industry' }| filter : '!（旧）' | filter: filterTagProp | orderBy : industryOrder| limitTo : 16 ">
+                            <label ng-repeat="tag in showTag|filter: { category:'industry' }| filter : '!（旧）' | orderBy : industryOrder| limitTo : 22 ">
                                 <input type="checkbox" ng-model="selected.industry[tag.name]" ng-checked="allFrags.industry" name="industry_search">
                                 <!-- <input type="checkbox" ng-model="user_univ" value="{{tag.name}}" name="univ_search"> -->
                                 {{tag.name}}
                             </label>
-                            <label ng-repeat="tag in userTag|filter: { category:'industry' }| filter : '!（旧）' | filter: filterTagProp | orderBy : industryOrder| startFrom: 16 " ng-show="industryShow">
+                            <label ng-repeat="tag in showTag|filter: { category:'industry' }| filter : '!（旧）' | orderBy : industryOrder| startFrom: 22 " ng-show="industryShow">
                                 <input type="checkbox" ng-model="selected.industry[tag.name]" ng-checked="allFrags.industry" name="industry_search">
                                 <!-- <input type="checkbox" ng-model="user_univ" value="{{tag.name}}" name="univ_search"> -->
                                 {{tag.name}}
@@ -384,9 +384,9 @@
                                             <div>
                                                 <select name="selectedTag" ng-model="currentSelectedTag[currentUser.id]">
                                                     <option selected="selected" value="" disabled>---タグを選択---</option>
-                                                    <option ng-if="ic.category === 'univ' " ng-repeat="tag in userTag|filter: { category:ic.category }| orderBy : univOrder" value="{{tag.id}}">{{tag.name}} / {{tag.categoryText}} </option>
-                                                    <option ng-if="ic.category === 'grade' " ng-repeat="tag in userTag|filter: { category:ic.category } |filter: filterTagProp| orderBy : gradeOrder" value="{{tag.id}}">{{tag.name}} / {{tag.categoryText}} </option>
-                                                    <option ng-if="ic.category === 'major' " ng-repeat="tag in userTag|filter: { category:ic.category } |filter: filterTagProp| orderBy : majorOrder" value="{{tag.id}}">{{tag.name}} / {{tag.categoryText}} </option>
+                                                    <option ng-if="ic.category === 'univ' " ng-repeat="tag in showTag|filter: { category:ic.category }| orderBy : univOrder" value="{{tag.id}}">{{tag.name}} / {{tag.categoryText}} </option>
+                                                    <option ng-if="ic.category === 'grade' " ng-repeat="tag in showTag|filter: { category:ic.category }| orderBy : gradeOrder" value="{{tag.id}}">{{tag.name}} / {{tag.categoryText}} </option>
+                                                    <option ng-if="ic.category === 'major' " ng-repeat="tag in showTag|filter: { category:ic.category } | orderBy : majorOrder" value="{{tag.id}}">{{tag.name}} / {{tag.categoryText}} </option>
                                                 </select>
                                             </div>
                                             <div class="edit-add-padding">
@@ -446,7 +446,7 @@
                                         <div>
                                             <select name="selectedTag" ng-model="currentSelectedTag[currentUser.id]">
                                                 <option selected="selected" value="" disabled>---タグを選択---</option>
-                                                <option ng-repeat="tag in userTag|filter: { category:'preference' } |filter: filterTagProp" value="{{tag.id}}">{{tag.name}} / {{tag.categoryText}} </option>
+                                                <option ng-repeat="tag in showTag|filter: { category:'preference' } " value="{{tag.id}}">{{tag.name}} / {{tag.categoryText}} </option>
                                             </select>
                                         </div>
                                         <div class="edit-add-padding">
@@ -503,7 +503,7 @@
                                     <div>
                                         <select name="selectedTag" ng-model="currentSelectedTag[currentUser.id]">
                                             <option selected="selected" value="" disabled>---タグを選択---</option>
-                                            <option ng-repeat="tag in userTag|filter: { category:'industry' } |filter: filterTagProp | orderBy : industryOrder" value="{{tag.id}}">{{tag.name}} / {{tag.categoryText}} </option>
+                                            <option ng-repeat="tag in showTag|filter: { category:'industry' } | orderBy : industryOrder" value="{{tag.id}}">{{tag.name}} / {{tag.categoryText}} </option>
                                         </select>
                                     </div>
                                     <div class="edit-add-padding">

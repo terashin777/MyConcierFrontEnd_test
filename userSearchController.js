@@ -24,6 +24,7 @@ angular.module('concierAdminApp',[])
         };
     })
 
+/*
     .filter('tagFilter', function() {
         // 1引数callbackを受け取れるように
         return function(tag, tagList) {
@@ -48,7 +49,7 @@ angular.module('concierAdminApp',[])
             }
         };
     })
-
+*/
 
 /*
     //↓ページの読み込み完了時に処理を実行するといったやり方ができないためカスタムのディレクティブを用いる。
@@ -91,6 +92,9 @@ angular.module('concierAdminApp',[])
 
      //↓削除予定リスト
      $scope.preRemoveTag = {};
+
+     //↓表示する用のタグ
+     $scope.showTag = [];
 
      //↓データ格納用
     $scope.lineUserList = [];
@@ -191,6 +195,7 @@ angular.module('concierAdminApp',[])
             }).
             success(function(d, status, headers, config) {
                 var newTag = d;
+                $scope.showTag = d;
                 newTag = newTag.concat(oldTag);
                 for(var tIdx in newTag){
                     //ユーザータグリストの中のcategoryを引数として渡し，それをswichで場合わけして，実際に表示する文字列に直している。
@@ -1381,12 +1386,12 @@ angular.module('concierAdminApp',[])
     };
 
     $scope.majorOrder = function(major) {
-        var order = { '機械': 0, '電気': 1, '情報': 2, '建築・土木・社会工学': 3 };
+        var order = { '機械': 0, '電気': 1, '情報': 2, '建築・土木・社会工学': 3, '材料・マテリアル': 4, '化学': 5, '化学工学': 6, '生物・農学': 7, '医学・歯学・薬学': 8, '福祉・看護': 9, '数学': 10, '物理': 11, '経営工': 12, '水産・畜産・農林': 13, '理系その他': 14 };
         return order[major.name];
     };
 
     $scope.industryOrder = function(industry) {
-        var order = { '自動車' : 0, '自動車部品': 1, '鉄道': 2, '海運・空運': 3, '輸送用機器': 4, '機械・重工': 5, '電機機器': 6, 'テレビ': 7, '住宅設備機器': 8, '医療機器': 9, '精密機器': 10, 'その他メーカー': 11, '通信サービス': 12, 'SIer': 13, 'ゲーム': 14, '建築': 15, '化学': 16, '医薬品': 17, '化粧品': 18, '石油': 19, '電力・ガス': 20, '鉄鋼': 21, '素材': 22 };
+        var order = { '自動車' : 0, '自動車部品': 1, '鉄道': 2, '海運・空運': 3, '輸送用機器': 4, '機械・重工': 5, '電機機器': 6, 'テレビ': 7, '住宅設備機器': 8, '医療機器': 9, '精密機器': 10, 'その他メーカー': 11, '通信サービス': 12, 'SIer': 13, 'ゲーム': 14, '建築': 15, '化学': 16, '化学工学': 17, '医薬品': 18, '化粧品': 19, '石油': 20, '電力・ガス': 21, '鉄鋼': 22, '素材': 23 };
         return order[industry.name];
     };
 
